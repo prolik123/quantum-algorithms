@@ -1,0 +1,7 @@
+qiskit>=2.3.0
+qiskit-aer>=0.17.2
+numpy>=2.4.0
+matplotlib>=3.10.8
+pylatexenc>=2.10
+jupyterlab>=4.5.5
+packaging>=26.0
