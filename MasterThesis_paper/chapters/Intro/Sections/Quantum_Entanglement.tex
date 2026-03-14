@@ -1,0 +1,30 @@
+\section{Quantum Entanglement}
+The tensor product structure naturally gives rise to states that have no classical analog. 
+A multi-qubit state is said to be \textit{separable} (or a product state) if it can be written as the tensor product of individual qubit states. 
+For instance, the state $\ket{\psi} = \frac{1}{2}(\ket{00} + \ket{01} + \ket{10} + \ket{11})$ is separable because 
+it can be factored as $\left(\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})\right) \otimes \left(\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})\right)$.
+
+However, the vast majority of states in a composite Hilbert space cannot be factored in this manner. 
+States that are not separable are called \textit{entangled}. Entanglement represents a profound form of non-local correlation between quantum systems, 
+famously described by Einstein, Podolsky, and Rosen (EPR) as "spooky action at a distance" \cite{einstein1935}. 
+
+\subsection{The Bell States}
+The most famous examples of maximally entangled two-qubit states are the four Bell states (or EPR pairs). 
+They form an orthonormal basis for the two-qubit state space and are defined as:
+\begin{align}
+    \ket{\Phi^+} &= \frac{1}{\sqrt{2}}(\ket{00} + \ket{11}) \\
+    \ket{\Phi^-} &= \frac{1}{\sqrt{2}}(\ket{00} - \ket{11}) \\
+    \ket{\Psi^+} &= \frac{1}{\sqrt{2}}(\ket{01} + \ket{10}) \\
+    \ket{\Psi^-} &= \frac{1}{\sqrt{2}}(\ket{01} - \ket{10})
+\end{align}
+Consider the state $\ket{\Phi^+}$. If we measure the first qubit and observe the outcome $0$, 
+the state instantaneously collapses to $\ket{00}$. 
+
+Consequently, a subsequent measurement of the second qubit will yield $0$ with 100\% certainty, 
+regardless of the physical distance separating the two qubits. 
+
+This perfect correlation violates the Bell inequalities, proving that quantum mechanics cannot be described by local hidden variable theories \cite{bell1964}. 
+
+Because an entangled state cannot be described by assigning definite independent states to its constituent qubits, 
+the Bloch sphere representation fails entirely for entangled qubits. The state of the global system is completely known, 
+yet the state of the individual subsystems is maximally mixed (completely unknown).

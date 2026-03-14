@@ -1,0 +1,56 @@
+\section{Quantum Logic Gates and Circuits}
+Classical algorithms are typically described using combinations of basic Boolean logic gates (such as AND, OR, and NOT). 
+Analogously, quantum algorithms are formalized using the \textit{quantum circuit model}, 
+where computation is executed via a sequence of unitary operations called quantum logic gates applied to a register of qubits, followed by measurements. 
+
+Because quantum evolution must be reversible, all quantum logic gates, with the exception of measurement, must be reversible. 
+Consequently, quantum gates are represented by unitary matrices.
+
+\subsection{Single-Qubit Gates}
+Single-qubit gates act on the state space $\mathbb{C}^2$ and are represented by $2 \times 2$ unitary matrices. 
+The most fundamental of these are the Pauli matrices, 
+which correspond to rotations by $\pi$ radians around the $x$, $y$, and $z$ axes of the Bloch sphere:
+\begin{align}
+    X &= \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \\
+    Y &= \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix} \\
+    Z &= \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}
+\end{align}
+The $X$ gate acts as a quantum bit-flip, mapping $\ket{0} \to \ket{1}$ and $\ket{1} \to \ket{0}$. 
+The $Z$ gate acts as a phase-flip, leaving $\ket{0}$ unchanged but mapping $\ket{1} \to -\ket{1}$. 
+
+Arguably the most ubiquitous single-qubit gate in quantum algorithms is the Hadamard gate, denoted $H$. 
+It creates an equal superposition when applied to computational basis states:
+\begin{equation}
+    H = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
+\end{equation}
+Applying $H$ to $\ket{0}$ yields the state $\ket{+} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$, 
+and applying it to $\ket{1}$ yields $\ket{-} = \frac{1}{\sqrt{2}}(\ket{0} - \ket{1})$. 
+
+Other essential single-qubit gates include the Phase gate ($S$) and the $\pi/8$ gate ($T$), which introduce relative phases:
+\begin{equation}
+    S = \begin{pmatrix} 1 & 0 \\ 0 & i \end{pmatrix}, \quad T = \begin{pmatrix} 1 & 0 \\ 0 & e^{i\pi/4} \end{pmatrix}
+\end{equation}
+
+\subsection{Multi-Qubit Gates: The CNOT Gate}
+To generate entanglement and perform conditional logic, gates must act on multiple qubits. 
+The paradigmatic two-qubit gate is the Controlled-NOT (CNOT) gate. 
+
+
+
+The CNOT gate acts on a control qubit and a target qubit. 
+If the control qubit is $\ket{1}$, it applies an $X$ gate (bit-flip) to the target qubit; if the control is $\ket{0}$, 
+it leaves the target unchanged. 
+
+In the computational basis $\{\ket{00}, \ket{01}, \ket{10}, \ket{11}\}$, 
+where the first qubit is the control, the matrix representation is:
+\begin{equation}
+    \text{CNOT} = \begin{pmatrix} 
+    1 & 0 & 0 & 0 \\ 
+    0 & 1 & 0 & 0 \\ 
+    0 & 0 & 0 & 1 \\ 
+    0 & 0 & 1 & 0 
+    \end{pmatrix}
+\end{equation}
+The CNOT gate is critical because it is the primary mechanism for creating entangled states. 
+For example, applying a Hadamard gate to the first qubit of the state $\ket{00}$ followed by a CNOT gate produces the Bell state 
+$\ket{\Phi^+} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$.

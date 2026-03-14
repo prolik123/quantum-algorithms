@@ -1,0 +1,26 @@
+\section{Composite Systems and Tensor Products}
+While a single qubit provides the fundamental basis for quantum information, 
+the true power of quantum computation emerges only when multiple qubits are combined. 
+
+To describe the state space of a multi-partite quantum system, we utilize the \textit{tensor product} (or Kronecker product), 
+denoted by $\otimes$.
+
+If system $A$ is described by a Hilbert space $\mathcal{H}_A$ of dimension $N$, 
+and system $B$ is described by a Hilbert space $\mathcal{H}_B$ of dimension $M$, 
+the composite system $AB$ resides in the tensor product space $\mathcal{H}_A \otimes \mathcal{H}_B$, which has dimension $N \times M$. 
+
+For two qubits, each residing in $\mathbb{C}^2$, 
+the composite two-qubit state lives in $\mathbb{C}^2 \otimes \mathbb{C}^2 \cong \mathbb{C}^4$. 
+
+The computational basis for this composite system is formed by the tensor products of the individual basis states:
+\begin{equation}
+    \{\ket{0} \otimes \ket{0}, \ket{0} \otimes \ket{1}, \ket{1} \otimes \ket{0}, \ket{1} \otimes \ket{1}\}
+\end{equation}
+For brevity, we often omit the tensor product symbol and write these basis states as $\ket{00}, \ket{01}, \ket{10},$ and $\ket{11}$. 
+A general two-qubit state $\ket{\psi}$ is a superposition of these four basis states:
+\begin{equation}
+    \ket{\psi} = \alpha_{00}\ket{00} + \alpha_{01}\ket{01} + \alpha_{10}\ket{10} + \alpha_{11}\ket{11}
+\end{equation}
+where $\sum_{i,j \in \{0,1\}} |\alpha_{ij}|^2 = 1$. 
+
+This exponential scaling of the state space dimension ($2^n$ for $n$ qubits) is a primary source of the proposed quantum computational advantage.

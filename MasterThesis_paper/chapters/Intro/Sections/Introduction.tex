@@ -1,0 +1,36 @@
+\section{Introduction}
+
+The theoretical limits of computation have traditionally been bound by the laws of classical physics. 
+The Turing Machine, the abstract mathematical model that underpins all modern classical computers, 
+operates on a deterministic tape of zeros and ones. 
+For decades, the growth of computational power followed Moore's Law, 
+doubling the density of transistors on integrated circuits approximately every two years. 
+However, as transistor features approach the atomic scale (sub-5nm), 
+classical deterministic behavior begins to break down due to quantum mechanical effects such as 
+electron tunneling and thermal noise. 
+
+In the early 1980s, physicists Paul Benioff \cite{benioff1980} and Richard Feynman \cite{feynman1982} 
+roposed a paradigm shift. Feynman famously observed that simulating quantum mechanical 
+systems on classical computers appears to incur an exponential overhead in computational resources. 
+He conjectured that a computer itself governed by quantum mechanics could simulate physical 
+systems efficiently. This idea was formalized by David Deutsch in 1985, 
+who defined the Universal Quantum Turing Machine \cite{deutsch1985}, 
+proving that a quantum computer could strictly simulate any physical process.
+
+
+Unlike classical bits, which exist in a definite state of 0 or 1, 
+quantum bits (qubits) leverage two fundamental quantum phenomena: 
+\textit{superposition} and \textit{entanglement}. 
+
+These properties allow quantum algorithms to explore a vast Hilbert space of 
+computational states simultaneously. 
+The discovery of polynomial-time quantum algorithms for problems that are exponentially 
+hard for classical computers-most notably Shor's algorithm for integer factorization 
+\cite{shor1994}-demonstrated that quantum computing is not merely a physical curiosity, 
+but a distinct computational complexity class with the potential to break modern cryptographic 
+infrastructure.
+
+This chapter establishes the rigorous mathematical and physical frameworks necessary to 
+understand these algorithms. We begin with linear algebra and the postulates of quantum mechanics, 
+move to the definition of the qubit and composite systems, 
+and conclude with the circuit model of quantum computation.

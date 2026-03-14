@@ -1,0 +1,187 @@
+\section{Computational Complexity and Quantum Advantage}
+
+
+
+The classification of problems based on their asymptotic resource scaling (time and space) 
+with respect to input size $N$ allows us to rigorously quantify quantum advantage. 
+By embedding quantum computation within the broader landscape of classical computational complexity \cite{arora2009computational}, 
+we establish a formal framework to evaluate the performance of quantum algorithms against their classical counterparts.
+
+\subsection{Definitions of Complexity Classes}
+Before establishing the relationships between classical and quantum computation, we must formally define the relevant complexity classes.
+
+\begin{itemize}
+    \item \textbf{P (Polynomial Time):} 
+    The class of decision problems solvable by a deterministic classical Turing machine in time $\mathcal{O}(N^k)$ for some constant $k$. 
+    This represents the class of problems that are classically tractable.
+
+    \item \textbf{ZPP (Zero-error Probabilistic Polynomial time):} 
+    The class of problems solvable by a probabilistic classical Turing machine that never makes an error 
+    (returns the correct answer with probability $1$), 
+    but its running time is polynomial only in \textit{expectation}. Formally, $\text{ZPP} = \text{RP} \cap \text{co-RP}$.
+
+    \item \textbf{RP (Randomized Polynomial time):} 
+    The class of decision problems solvable by a probabilistic Turing machine in polynomial time with one-sided error. 
+    If the correct answer is ``no'', the machine always returns ``no''. If the correct answer is ``yes'', it returns ``yes'' 
+    with a probability of at least $1/2$.
+
+    \item \textbf{BPP (Bounded-error Probabilistic Polynomial time):} 
+    The class of decision problems solvable by a probabilistic classical Turing machine in polynomial time, 
+    where the machine yields the correct answer with a probability strictly bounded away from $1/2$ (typically defined as $\geq 2/3$) for all inputs. 
+    Through standard error amplification (running the algorithm multiple times and taking a majority vote), 
+    this error can be made exponentially small \cite{arora2009computational}.
+
+    \item \textbf{NP (Nondeterministic Polynomial time):} 
+    The class of decision problems for which a ``yes'' instance possesses a classical witness (or certificate) 
+    that can be verified by a deterministic Turing machine in polynomial time.
+
+    \item \textbf{BQP (Bounded-error Quantum Polynomial time):} 
+    The formal quantum analogue of BPP. It is the class of decision problems solvable by a QTM, 
+    or a uniform family of polynomial-size quantum circuits, in polynomial time, 
+    with an error probability bounded by $1/3$ for all inputs \cite{bernstein1997, nielsen2010quantum}.
+
+    \item \textbf{PP (Probabilistic Polynomial time):} 
+    The class of decision problems solvable by a probabilistic Turing machine in polynomial time where the probability of 
+    returning the correct answer is strictly greater than $1/2$. 
+    Because the error probability is not bounded away from $1/2$ by a constant, 
+    PP is a remarkably powerful class that contains both NP and BQP \cite{adleman1997}.
+
+    \item \textbf{PSPACE (Polynomial Space):} 
+    The class of decision problems solvable by a deterministic Turing machine using strictly $\mathcal{O}(N^k)$ memory space, 
+    without any restriction on execution time.
+\end{itemize}
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Randomised_Complexity_Classes.jpg}
+    \caption{Euler diagram illustrating the theoretical relationships and hierarchy of classical and quantum computational complexity classes. Source: Wikipedia}
+    \label{fig:complexity_euler}
+\end{figure}
+
+\subsection{Proofs of Inclusion}
+To contextualize quantum advantage, we formally establish the hierarchy of inclusions: 
+$\text{P} \subseteq \text{ZPP} \subseteq \text{RP} \subseteq \text{BPP} \subseteq \text{BQP} \subseteq \text{PP} \subseteq \text{PSPACE}$. 
+While it is widely conjectured that BQP is strictly larger than BPP, 
+definitively proving strict inclusions remains one of the most significant open problems in theoretical computer science.
+
+\textbf{Theorem 1:} $\text{P} \subseteq \text{BPP}$
+\begin{proof}
+Let $L$ be a language such that $L \in \text{P}$. 
+By definition, there exists a deterministic Turing machine $M$ that decides whether an input $x \in L$ in polynomial time with $0$ error probability. 
+We can construct a probabilistic Turing machine $M'$ that simply ignores its capability to generate random coin tosses 
+and perfectly executes the deterministic transition logic of $M$. 
+Because $M'$ operates exactly as $M$, it outputs the correct answer with a probability of $1$. 
+Since $1$ is strictly greater than the $2/3$ threshold required for BPP, it follows immediately that $L \in \text{BPP}$.
+\end{proof}
+
+\textbf{Theorem 2:} $\text{BPP} \subseteq \text{BQP}$
+\begin{proof}
+Let $L \in \text{BPP}$. There exists a probabilistic classical Turing machine $M$ that decides $L$ in polynomial time $p(N)$ 
+with an error probability bounded by $1/3$. 
+To show that $L \in \text{BQP}$, we must simulate $M$ using a Quantum Turing Machine (QTM) in polynomial time. This requires two logical steps:
+
+\textit{Step 1: Classical Reversible Simulation.} 
+According to Bennett's theorem \cite{bennett1973}, 
+any classical computation can be made reversible with at most a polynomial overhead in time and space. 
+We can replace all irreversible classical logic gates (like AND/OR) with reversible quantum equivalents (like the Toffoli gate). 
+
+Thus, we construct a deterministic, reversible quantum circuit $C_{rev}$ that mimics the deterministic parts of $M$.
+
+\textit{Step 2: Quantum Randomness Generation.} 
+The machine $M$ requires random bits to function. 
+
+In a quantum circuit, 
+a perfectly unbiased random bit can be generated by applying a Hadamard gate $H$ to an ancilla qubit initialized in the $|0\rangle$ state:
+\begin{equation}
+    H|0\rangle = \frac{1}{\sqrt{2}}(|0\rangle + |1\rangle)
+\end{equation}
+Measuring this state in the computational basis yields a $0$ or $1$, each with a probability of $|\frac{1}{\sqrt{2}}|^2 = 1/2$. 
+
+By using polynomial applications of the Hadamard gate to supply random bits to the reversible circuit $C_{rev}$, 
+the QTM perfectly simulates the probabilistic logic of $M$. 
+
+Because the internal state transitions map exactly to the classical probabilistic paths, 
+the QTM decides $L$ in polynomial time with the exact same error bound ($\leq 1/3$). Therefore, $L \in \text{BQP}$.
+\end{proof}
+
+\textbf{Theorem 3:} $\text{BQP} \subseteq \text{PSPACE}$ (Direct Proof)
+\begin{proof}
+Let $L \in \text{BQP}$. 
+
+By definition, there exists a uniform family of quantum circuits $\{C_N\}$ of size $m = \mathcal{O}(N^k)$ acting on $n = \mathcal{O}(N^j)$ qubits 
+that decides $L$. 
+To prove $L \in \text{PSPACE}$, 
+we must show that a deterministic classical machine can calculate the final probability amplitude of the accepting state 
+using only polynomial memory \cite{bernstein1997}.
+
+\begin{figure}[hbt!]
+    \centering
+    \includegraphics[width=0.7\textwidth]{Sum_of_histories_tree.png}
+    \caption{A computational tree representing the Feynman sum-over-histories approach for evaluating the probability amplitudes of quantum circuits. Source: Wikipedia}
+    \label{fig:sum_of_histories}
+\end{figure}
+
+Let the circuit $C_N$ consist of $m$ sequential unitary gates $U_1, U_2, \dots, U_m$. 
+The final transition amplitude to a specific basis state $|y\rangle$ from an initial state $|x\rangle$ is given by:
+\begin{equation}
+    \langle y | U_m U_{m-1} \dots U_1 | x \rangle
+\end{equation}
+By inserting the resolution of the identity $I = \sum_{z} |z\rangle\langle z|$ between every gate operation, 
+we can rewrite this amplitude as a Feynman sum over all possible classical computational paths:
+\begin{equation}
+    \sum_{z_1, z_2, \dots, z_{m-1}} \langle y | U_m | z_{m-1} \rangle \langle z_{m-1} | U_{m-1} | z_{m-2} \rangle \dots \langle z_1 | U_1 | x \rangle
+\end{equation}
+Because there are $n$ qubits, there are $2^n$ possible basis states at each of the $m$ steps. 
+Consequently, evaluating this sum explores $2^{nm}$ distinct paths, which requires exponential time.
+
+However, a deterministic classical machine can evaluate this sum in polynomial \textit{space} using a depth-first search of the computational tree. 
+The machine evaluates one single path at a time. To do this, it only needs to store:
+\begin{enumerate}
+    \item 
+    The current path being evaluated, which requires $m \times n$ bits (a polynomial amount of space).
+
+    \item 
+    A running total of the cumulative complex amplitude. Since BQP allows an error margin of $1/3$, we do not need infinite precision. 
+    Storing the running total to polynomial precision (polynomial number of bits) is sufficient to boundedly approximate the final probability.
+\end{enumerate}
+Once the amplitude of a single path is computed and added to the running total, 
+the memory used to store that path is overwritten by the next path in the sequence. 
+
+Because the depth of the tree is bounded by $m$ (a polynomial), and the precision required is bounded by a polynomial, 
+the maximum memory utilized at any given moment scales polynomially with $N$. 
+
+Thus, the entire simulation operates within PSPACE, proving $L \in \text{PSPACE}$.
+\end{proof}
+
+
+\textbf{Theorem 4:} $\text{BQP} \subseteq \text{PP}$
+\begin{proof}
+Let $L \in \text{BQP}$. 
+By definition, there exists a uniform family of polynomial-size quantum circuits that decides $L$ with an error probability bounded by $1/3$. 
+
+Computing the exact acceptance probability involves summing over exponentially many classical paths, 
+identical to the Feynman path formulation in Theorem 3. A PP machine can nondeterministically guess a computational path and verify it. 
+Because PP allows for an unbounded error margin (the acceptance threshold only needs to be strictly greater than $1/2$), 
+the PP machine can encode the positive and negative contributions of the complex transition amplitudes into its acceptance and rejection paths. 
+By carefully balancing the number of accepting paths to reflect the squared amplitudes of the quantum state, 
+the PP machine will accept with a probability $>1/2$ if and only if the quantum circuit accepts with probability $\geq 2/3$. 
+Thus, the polynomial-time quantum computation is subsumed within the classical probabilistic polynomial-time framework with unbounded error, 
+proving $L \in \text{PP}$ \cite{adleman1997}.
+
+\end{proof}
+
+\textbf{Theorem 5:} $\text{PP} \subseteq \text{PSPACE}$
+\begin{proof}
+Let $L \in \text{PP}$. 
+A probabilistic Turing machine $M$ deciding $L$ runs in polynomial time, meaning it tosses at most a polynomial number of coins,
+ $m = \mathcal{O}(N^k)$, and thus has at most $2^m$ possible execution paths.
+
+To determine if the acceptance probability is strictly greater than $1/2$, 
+a deterministic Turing machine can systematically enumerate every possible path of $M$. 
+By using a depth-first search (similar to Theorem 3), 
+the deterministic machine only needs to store the current path of length $m$ and maintain a counter of the number of accepting paths. 
+
+Since the counter maxes out at $2^m$, it requires exactly $m$ bits of space. 
+Because the maximum memory utilized at any moment scales polynomially with $N$, 
+the entire simulation operates within PSPACE. Therefore, $L \in \text{PSPACE}$.
+\end{proof}

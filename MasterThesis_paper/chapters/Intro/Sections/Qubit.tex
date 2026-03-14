@@ -1,0 +1,55 @@
+\section{The Qubit}
+The fundamental unit of quantum information is the \textit{qubit}. 
+
+While a classical bit is physically realized by a system with two distinct stable states (e.g., high/low voltage), 
+a qubit is a two-level quantum mechanical system.
+
+\subsection{Computational Basis}
+The mathematical representation of a single qubit is a vector in the two-dimensional Hilbert space $\mathbb{C}^2$. 
+
+We define an orthonormal basis $\{\ket{0}, \ket{1}\}$, known as the \textit{computational basis}, 
+corresponding to the classical bit values 0 and 1:
+\begin{equation}
+    \ket{0} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \quad \ket{1} = \begin{pmatrix} 0 \\ 1 \end{pmatrix}
+\end{equation}
+
+\subsection{Superposition}
+Unlike a classical bit, a qubit can exist in a linear combination of basis states, 
+a phenomenon known as \textit{superposition}. A general qubit state $\ket{\psi}$ is described by:
+\begin{equation}
+    \ket{\psi} = \alpha\ket{0} + \beta\ket{1}
+\end{equation}
+where $\alpha, \beta \in \mathbb{C}$ are complex probability amplitudes. 
+The Born rule dictates that upon measurement in the computational basis, 
+the probability of observing outcome $\ket{0}$ is $P(0) = |\alpha|^2$, and the probability of observing $\ket{1}$ is $P(1) = |\beta|^2$. 
+The normalization condition requires:
+\begin{equation}
+    |\alpha|^2 + |\beta|^2 = 1
+\end{equation}
+
+\subsection{The Bloch Sphere}
+To visualize a single qubit, we can simplify the parameters. 
+Since the global phase of a quantum state (a factor of $e^{i\gamma}$) has no observable physical consequence, 
+we can rewrite the state $\ket{\psi}$ effectively using only two real degrees of freedom, $\theta$ and $\phi$:
+\begin{equation}
+    \ket{\psi} = \cos\left(\frac{\theta}{2}\right)\ket{0} + e^{i\phi}\sin\left(\frac{\theta}{2}\right)\ket{1}
+\end{equation}
+Here, $0 \leq \theta \leq \pi$ and $0 \leq \phi < 2\pi$.
+
+This parameterization maps every pure qubit state to a unique point on the surface of a unit sphere in $\mathbb{R}^3$, 
+known as the \textbf{Bloch Sphere}.
+\begin{itemize}
+    \item The North Pole ($\theta = 0$) represents the state $\ket{0}$.
+    \item The South Pole ($\theta = \pi$) represents the state $\ket{1}$.
+    \item Points on the equator (e.g., $\theta = \pi/2, \phi = 0$) represent equal superpositions such as 
+    $\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$.
+\end{itemize}
+While the Bloch sphere provides an excellent intuition for single-qubit gates (which correspond to rotations on the sphere), 
+it does not generalize to multi-qubit systems due to entanglement.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Bloch_sphere.jpg}
+    \caption{Bloch sphere: Source:\textit{Wikipedia}.}
+    \label{fig:Bloch_sphere}
+\end{figure}
