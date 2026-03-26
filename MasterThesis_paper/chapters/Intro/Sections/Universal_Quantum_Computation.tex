@@ -1,0 +1,11 @@
+\section{Universal Quantum Computation}
+In classical computing, a set of logic gates is considered \textit{universal} 
+if any arbitrary Boolean function can be constructed using only gates from that set (e.g., the NAND gate alone is universal). 
+
+In the quantum regime, an arbitrary unitary transformation requires continuous parameters, 
+implying an infinite number of possible gates. 
+
+However, the Solovay-Kitaev theorem states that any quantum algorithm can be approximated to arbitrary accuracy using a finite, 
+discrete set of quantum gates, with only a polylogarithmic overhead in the number of gates \cite{dawson2005}. 
+A common universal gate set used in fault-tolerant quantum computing is the combination of the single-qubit Hadamard and $T$ gates, 
+along with the two-qubit CNOT gate: $\{H, T, \text{CNOT}\}$. 
