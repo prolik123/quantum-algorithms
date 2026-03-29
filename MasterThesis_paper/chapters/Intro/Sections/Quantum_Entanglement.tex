@@ -1,30 +1,39 @@
 \section{Quantum Entanglement}
-The tensor product structure naturally gives rise to states that have no classical analog. 
-A multi-qubit state is said to be \textit{separable} (or a product state) if it can be written as the tensor product of individual qubit states. 
-For instance, the state $\ket{\psi} = \frac{1}{2}(\ket{00} + \ket{01} + \ket{10} + \ket{11})$ is separable because 
-it can be factored as $\left(\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})\right) \otimes \left(\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})\right)$.
+When multiple qubits are combined, their joint state space is formed by the multiplicative tensor product of their individual vector spaces.
+This specific mathematical structure naturally gives rise to collective system states that have absolutely no classical equivalent.
 
-However, the vast majority of states in a composite Hilbert space cannot be factored in this manner. 
-States that are not separable are called \textit{entangled}. Entanglement represents a profound form of non-local correlation between quantum systems, 
-famously described by Einstein, Podolsky, and Rosen (EPR) as "spooky action at a distance" \cite{einstein1935}. 
+A multi-qubit state is mathematically defined as \textit{separable} (or a product state) if it can be cleanly factored into the tensor product of independent, individual qubit states.
+For instance, the uniform superposition state $\ket{\psi} = \frac{1}{2}(\ket{00} + \ket{01} + \ket{10} + \ket{11})$ is highly parallel, but it is still fundamentally separable.
+This is because it can be factored perfectly into $\left(\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})\right) \otimes \left(\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})\right)$, meaning manipulating or measuring one qubit does not mathematically force an outcome on the other.
+
+However, the vast mathematical majority of states residing in a composite Hilbert space cannot be factored in this manner.
+States that inherently resist this factoring are called \textit{entangled}.
+Entanglement represents a profound form of non-local correlation, acting as the primary fuel for the massive speedups seen in advanced quantum algorithms.
+In a purely entangled system, the quantum state of the collective whole is perfectly defined, yet the states of the individual constituent subsystems remain completely undefined.
+This non-classical phenomenon was famously, and somewhat skeptically, described by Albert Einstein, Boris Podolsky, and Nathan Rosen (EPR) as "spooky action at a distance" \cite{einstein1935}.
 
 \subsection{The Bell States}
-The most famous examples of maximally entangled two-qubit states are the four Bell states (or EPR pairs). 
-They form an orthonormal basis for the two-qubit state space and are defined as:
+The most iconic examples of maximally entangled two-qubit systems are the four Bell states, often referred to in the literature as EPR pairs \cite{nielsen2010quantum}.
+They form a complete, orthonormal basis for the entire two-qubit state space and are mathematically defined as follows:
 \begin{align}
     \ket{\Phi^+} &= \frac{1}{\sqrt{2}}(\ket{00} + \ket{11}) \\
     \ket{\Phi^-} &= \frac{1}{\sqrt{2}}(\ket{00} - \ket{11}) \\
     \ket{\Psi^+} &= \frac{1}{\sqrt{2}}(\ket{01} + \ket{10}) \\
     \ket{\Psi^-} &= \frac{1}{\sqrt{2}}(\ket{01} - \ket{10})
 \end{align}
-Consider the state $\ket{\Phi^+}$. If we measure the first qubit and observe the outcome $0$, 
-the state instantaneously collapses to $\ket{00}$. 
 
-Consequently, a subsequent measurement of the second qubit will yield $0$ with 100\% certainty, 
-regardless of the physical distance separating the two qubits. 
+Consider the specific entangled state $\ket{\Phi^+}$.
+Imagine two experimental parties, traditionally named Alice and Bob, each holding exactly one isolated qubit of this pair.
+If Alice measures her isolated qubit, she inherently faces a 50\% probability of observing a $0$ and a 50\% probability of observing a $1$.
+However, the very moment she observes a $0$, the global wave function of the entire bipartite system instantaneously collapses from the superposition into the definite state $\ket{00}$.
 
-This perfect correlation violates the Bell inequalities, proving that quantum mechanics cannot be described by local hidden variable theories \cite{bell1964}. 
+Consequently, if Bob subsequently measures his corresponding qubit, he will observe a $0$ with absolute 100\% certainty.
+This correlation holds true regardless of whether Bob is sitting in the same laboratory as Alice or is separated by light-years across the galaxy.
 
-Because an entangled state cannot be described by assigning definite independent states to its constituent qubits, 
-the Bloch sphere representation fails entirely for entangled qubits. The state of the global system is completely known, 
-yet the state of the individual subsystems is maximally mixed (completely unknown).
+This perfect, instantaneous correlation statistically violates the mathematical limits established by Bell's inequalities.
+This violation is deeply significant because it definitively proves that quantum mechanics cannot be explained by "local hidden variable" theories \cite{bell1964}.
+In other words, the measurement outcomes are not secretly pre-programmed into the particles before they separate; the universe is fundamentally, irreducibly probabilistic at the quantum level.
+
+Because an entangled system cannot be mathematically decoupled into independent individual states, the single-qubit Bloch sphere representation fails entirely when attempting to visualize entanglement.
+The fundamental physical paradox here is one of information distribution.
+While we can possess maximal knowledge about the joint system as a whole (a pure state), we inherently possess absolutely zero specific knowledge about its individual constituent parts prior to measurement.

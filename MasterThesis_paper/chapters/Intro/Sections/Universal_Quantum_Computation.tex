@@ -1,11 +1,20 @@
 \section{Universal Quantum Computation}
-In classical computing, a set of logic gates is considered \textit{universal} 
-if any arbitrary Boolean function can be constructed using only gates from that set (e.g., the NAND gate alone is universal). 
+In classical computing, the concept of universality is remarkably straightforward.
+A small, finite set of fundamental logic gates—or even a single logical operator like the NAND gate—is perfectly sufficient to build and evaluate any arbitrary Boolean function.
 
-In the quantum regime, an arbitrary unitary transformation requires continuous parameters, 
-implying an infinite number of possible gates. 
+Transitioning to the quantum regime, however, introduces a fundamental physical complication: the quantum state space is completely continuous.
+Because valid quantum operations correspond to arbitrary geometric rotations within a high-dimensional Hilbert space, hitting a specific target state is much like trying to manually rotate a dial to a mathematically perfect, irrational angle.
+Executing exact, arbitrary unitary transformations would theoretically require a continuously parameterized—and therefore infinite—set of logic gates.
 
-However, the Solovay-Kitaev theorem states that any quantum algorithm can be approximated to arbitrary accuracy using a finite, 
-discrete set of quantum gates, with only a polylogarithmic overhead in the number of gates \cite{dawson2005}. 
-A common universal gate set used in fault-tolerant quantum computing is the combination of the single-qubit Hadamard and $T$ gates, 
-along with the two-qubit CNOT gate: $\{H, T, \text{CNOT}\}$. 
+To bridge this theoretical gap between continuous unitary operations and the discrete, fault-tolerant reality of physical hardware, quantum algorithm design relies heavily on the Solovay-Kitaev theorem \cite{dawson2005}.
+This foundational theorem dictates that we do not actually need an infinite variety of gates to navigate the state space.
+Instead, any arbitrary quantum operation can be reliably approximated to a desired accuracy, $\epsilon$, using a small, finite, and discrete set of basic quantum gates.
+Crucially, it mathematically proves that the number of fundamental gates required to achieve this approximation scales only polylogarithmically with $1/\epsilon$.
+This minimal computational overhead ensures that our need to discretely approximate operations does not accidentally destroy the exponential algorithmic speedups inherent to quantum computation.
+
+Consequently, modern fault-tolerant quantum computing architectures standardly utilize the so-called Clifford+$T$ universal gate set.
+This standard library typically consists of the Hadamard ($H$), the $\pi/8$ phase gate ($T$), and the two-qubit CNOT gate.
+There is a fascinating dichotomy within this set.
+Networks composed entirely of Clifford gates (like $H$ and CNOT) are mathematically easy to track and can actually be efficiently simulated on a standard classical computer, a strict limitation formalized by the Gottesman-Knill theorem \cite{nielsen2010quantum}.
+However, the strategic addition of the non-Clifford $T$ gate breaks this classical simulatability.
+Adding the $T$ gate effectively unlocks the ability to navigate the continuous quantum space, strictly elevating the discrete set to full quantum universality.

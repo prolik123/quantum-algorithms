@@ -1,64 +1,99 @@
 \section{Grover's Algorithm}
 \label{sec:grover}
 
-\subsection{Problem Definition}
-The unstructured search problem can be formally defined as follows: let $X = \{0, 1\}^n$ be a search space of $N = 2^n$ elements. We are given a boolean function, often referred to as an oracle, $f: X \rightarrow \{0, 1\}$. The goal is to find an element $x^* \in X$ (the target or solution) such that $f(x^*) = 1$. For all other elements $x \neq x^*$, $f(x) = 0$ \cite{nielsen2010quantum}.
+\subsection{The Unstructured Search Problem}
+Consider the ubiquitous computer science problem of searching an unstructured database. 
+Formally, let $X = \{0, 1\}^n$ be a search space consisting of $N = 2^n$ distinct elements. 
+We are provided with a black-box boolean function, commonly referred to as an oracle, denoted by $f: X \rightarrow \{0, 1\}$. 
+Our objective is to identify a specific target element $x^* \in X$ such that $f(x^*) = 1$, while for all other non-target elements $x \neq x^*$, $f(x) = 0$ \cite{nielsen2010quantum}.
 
-In the classical computing paradigm, since the database is entirely unstructured (unsorted), there is no algorithmic strategy better than a linear search. In the worst-case scenario, one must query the function $f(x)$ for all $N$ elements, resulting in a time complexity of $\mathcal{O}(N)$. On average, the solution is found after $N/2$ queries.
+In the classical computational paradigm, the lack of underlying structure or sorting in the database dictates that no algorithmic strategy can outperform a brute-force linear search. 
+To guarantee finding the marked element, a classical algorithm must evaluate $f(x)$ up to $N$ times, yielding a worst-case time complexity of $\mathcal{O}(N)$ and an average-case complexity of $N/2$. 
+Grover's algorithm shatters this classical limit, offering a provable quadratic speedup by finding the target in $\mathcal{O}(\sqrt{N})$ queries.
 
-\subsection{Intuition}
-A common classical analogy for this problem is searching for a specific marked coin in a large, unsorted bag of coins. Classically, one must pull out coins one by one until the marked one is found. 
+\subsection{Intuition: Finding a Needle in a Quantum Haystack}
+A standard classical analogy for this problem is locating a specific name in a telephone directory that has been sorted by phone number rather than alphabetically. 
+A classical computer handles this by flipping through the pages one by one. 
 
-Quantum mechanics approaches this differently by utilizing the principles of superposition and interference. Instead of evaluating elements sequentially, the algorithm prepares a quantum state that represents all items in the search space simultaneously. It then applies a phase-flip operation that inverts the amplitude of the correct item (assigning it a negative phase). Because a negative amplitude cannot be directly measured, a subsequent operation called "inversion about the mean" is applied. This operation suppresses the amplitudes of the incorrect items and significantly amplifies the amplitude of the target item. Through iterative application of these two steps, the probability of measuring the target item approaches unity \cite{grover1996fast}.
+At first glance, one might assume a quantum computer speeds this up simply by checking all pages simultaneously via superposition. 
+However, quantum mechanics dictates that directly measuring a uniform superposition of all pages would just collapse the state into a random, likely incorrect, entry. 
+The true genius of Grover's approach lies not in parallel checking, but in wave interference—a process generalized as \textit{amplitude amplification} \cite{grover1996fast, brassard2002quantum}.
 
-\subsection{Algorithm Structure and Pseudocode}
-The algorithm operates on an $n$-qubit register, initialized to the ground state $|0\rangle^{\otimes n}$. The procedure relies on the repeated application of an operator $\mathcal{G}$, known as the Grover iteration. 
+Imagine the superposition of all database entries as an orchestra where every musician is playing a continuous note at the exact same volume. 
+First, the quantum oracle identifies the "correct" musician and tells them to play their note perfectly out of phase (flipping its mathematical sign). 
+To the human ear, the overall volume hasn't changed because phase is unobservable on its own. 
+Next, the algorithm applies a diffusion operator, which acts like a conductor instructing the orchestra to reflect their notes around the average volume of the room. 
+Because the correct musician's note is uniquely negative, the new average is slightly lowered. 
+When every musician reflects their volume across this new average, the out-of-phase note becomes dramatically louder (constructive interference), while all the other notes become quieter (destructive interference). 
+By repeating this process, the correct answer eventually drowns out the rest of the noise entirely.
+
+\subsection{Algorithm Structure}
+The algorithm operates on an $n$-qubit computational register initialized to the ground state $|0\rangle^{\otimes n}$. 
+The procedure relies on the repeated application of an operator $\mathcal{G}$, defined as the Grover iteration. 
 
 \begin{figure}[htbp]
     \centering
      \includegraphics[width=0.85\textwidth]{grover_image.png}
-    \caption{General quantum circuit for Grover's algorithm, depicting the initialization phase followed by repeated applications of the Oracle and Diffusion operators.}
+    \caption{General quantum circuit for Grover's algorithm. The initialization phase prepares a uniform superposition, followed by $R$ applications of the Grover iteration (Oracle and Diffuser).}
     \label{fig:grover_circuit}
 \end{figure}
 
-The state is first put into a uniform superposition $|s\rangle$ using the Hadamard transform $H^{\otimes n}$. The core Grover iteration $\mathcal{G} = U_s U_f$ consists of two distinct unitary operators \cite{kaye2007introduction}:
+To begin, the system is projected into a uniform superposition $|s\rangle$ using the $n$-qubit Hadamard transform $H^{\otimes n}$. 
+The core Grover iteration $\mathcal{G} = U_s U_f$ is then constructed from two distinct unitary operators \cite{kaye2007introduction}:
 \begin{enumerate}
-    \item \textbf{The Phase Oracle ($U_f$):} This operator applies a conditional phase shift. Its action can be defined mathematically as $U_f = I - 2|x^*\rangle\langle x^*|$. It leaves all non-target states unchanged while flipping the sign of the target state $|x^*\rangle$.
-    \item \textbf{The Diffusion Operator ($U_s$):} This operator performs an inversion about the mean amplitude. It is defined as $U_s = 2|s\rangle\langle s| - I$. Practically, $U_s$ is constructed by conjugating a phase shift of the $|0\rangle^{\otimes n}$ state with Hadamard transforms: $U_s = H^{\otimes n} (2|0\rangle\langle 0| - I) H^{\otimes n}$.
+    \item \textbf{The Phase Oracle ($U_f$):} This operator flags the target element by applying a conditional phase shift. 
+    Mathematically, it is defined as $U_f = I - 2|x^*\rangle\langle x^*|$. 
+    It acts as an identity matrix for all non-target states, while flipping the phase of the target state $|x^*\rangle \rightarrow -|x^*\rangle$.
+    \item \textbf{The Diffusion Operator ($U_s$):} This operator executes the "inversion about the mean" logic. 
+    It is defined as $U_s = 2|s\rangle\langle s| - I$. 
+    In hardware, $U_s$ is synthesized by conjugating a global phase shift of the ground state with Hadamard transforms: $U_s = H^{\otimes n} (2|0\rangle\langle 0| - I) H^{\otimes n}$.
 \end{enumerate}
 
-The sequence of operations is formalized in Algorithm \ref{alg:grover}.
+The entire routine is formalized below in Algorithm \ref{alg:grover}.
 
-\begin{algorithm}
+\begin{algorithm}[htbp]
 \caption{Grover's Search Algorithm}\label{alg:grover}
 \begin{algorithmic}[1]
 \State \textbf{Input:} A quantum oracle $U_f$ that evaluates $f(x)$ and flips the phase of $|x^*\rangle$.
-\State \textbf{Output:} The target state $|x^*\rangle$ with probability $P \approx 1$.
-\State Initialize $n$ qubits to $|0\rangle^{\otimes n}$
-\State Apply Hadamard transform $H^{\otimes n}$ to create a uniform superposition $|s\rangle$:
+\State \textbf{Output:} The target state $|x^*\rangle$ with success probability $P \approx 1$.
+\State Initialize an $n$-qubit register to the ground state: $|\psi_0\rangle = |0\rangle^{\otimes n}$
+\State Apply the Hadamard transform $H^{\otimes n}$ to create a uniform superposition $|s\rangle$:
        \Statex \qquad $|s\rangle = \frac{1}{\sqrt{N}} \sum_{x=0}^{N-1} |x\rangle$
-\State Calculate optimal iterations: $R = \lfloor \frac{\pi}{4}\sqrt{N} \rfloor$
+\State Calculate the optimal number of iterations: $R = \lfloor \frac{\pi}{4}\sqrt{N} \rfloor$
 \For{$i = 1$ to $R$}
     \State Apply Oracle $U_f$: $|x\rangle \rightarrow (-1)^{f(x)}|x\rangle$
-    \State Apply Diffuser $U_s = H^{\otimes n} (2|0\rangle\langle 0| - I) H^{\otimes n}$
+    \State Apply Diffuser $U_s = 2|s\rangle\langle s| - I$: perform inversion about the mean amplitude
 \EndFor
-\State Measure the $n$-qubit register in the computational basis
+\State Measure the $n$-qubit register in the computational basis.
 \end{algorithmic}
 \end{algorithm}
 
-\subsection{Proof of Correctness and Complexity}
-The correctness and exact bounds of Grover's algorithm can be rigorously proven using geometric arguments within a two-dimensional subspace \cite{brassard2002quantum, boyer1998tight}. Let $|x^*\rangle$ be the orthonormal target state and $|s'\rangle$ be the uniform superposition of all $N-1$ non-target states:
+\subsection{Geometric Proof of Correctness}
+The efficiency and strict boundaries of Grover's algorithm are best understood through a geometric lens \cite{brassard2002quantum, boyer1998tight}. 
+Because the initial state and all subsequent operations are completely symmetric with respect to the non-target elements, the entire execution of the algorithm is strictly confined to a real, two-dimensional Hilbert subspace. 
+
+We define an orthonormal basis for this plane consisting of the target state $|x^*\rangle$ and a state $|s'\rangle$, which is the uniform superposition of all $N-1$ incorrect elements:
 \begin{equation}
     |s'\rangle = \frac{1}{\sqrt{N-1}} \sum_{x \neq x^*} |x\rangle
 \end{equation}
 
-The initial superposition state $|s\rangle$ is a linear combination of these two basis vectors:
+The starting uniform superposition $|s\rangle$ can thus be expressed as a linear combination of these two basis vectors:
 \begin{equation}
     |s\rangle = \sin(\theta)|x^*\rangle + \cos(\theta)|s'\rangle
 \end{equation}
-where the mixing angle $\theta$ is defined by $\sin(\theta) = \frac{1}{\sqrt{N}}$.
+where the initial angle $\theta$ is defined by $\sin(\theta) = \frac{1}{\sqrt{N}}$.
 
-In the basis $\{|x^*\rangle, |s'\rangle\}$, the action of the Oracle $U_f$ and the Diffuser $U_s$ can be represented as reflection matrices. The Grover iteration $\mathcal{G} = U_s U_f$ is the product of these two reflections, which mathematically constitutes a rotation in this two-dimensional subspace. The rotation matrix for $\mathcal{G}$ is:
+Within this 2D plane, the operations $U_f$ and $U_s$ have intuitive geometric interpretations:
+\begin{itemize}
+    \item $U_f = I - 2|x^*\rangle\langle x^*|$ applies a negative sign only to $|x^*\rangle$. 
+    Geometrically, this is a perfect \textbf{reflection across the $|s'\rangle$ axis}.
+    \item $U_s = 2|s\rangle\langle s| - I$ preserves $|s\rangle$ but flips the sign of any vector orthogonal to it. 
+    Geometrically, this is a \textbf{reflection across the $|s\rangle$ vector}.
+\end{itemize}
+
+A foundational theorem of linear algebra states that the product of two reflections in a plane results in a rotation. 
+Because the angle between the reflection axes ($|s'\rangle$ and $|s\rangle$) is exactly $\theta$, their product $\mathcal{G} = U_s U_f$ induces a rotation by $2\theta$ towards the target state $|x^*\rangle$. 
+The transformation matrix for a single Grover iteration is:
 \begin{equation}
     \mathcal{G} = \begin{pmatrix} 
     \cos 2\theta & \sin 2\theta \\ 
@@ -66,41 +101,70 @@ In the basis $\{|x^*\rangle, |s'\rangle\}$, the action of the Oracle $U_f$ and t
     \end{pmatrix}
 \end{equation}
 
-Applying $\mathcal{G}$ exactly $k$ times to the initial state $|s\rangle$ yields:
+Applying $\mathcal{G}$ iteratively $k$ times to the initial state $|s\rangle$ simply compounds this rotation:
 \begin{equation}
     \mathcal{G}^k |s\rangle = \sin((2k+1)\theta)|x^*\rangle + \cos((2k+1)\theta)|s'\rangle
 \end{equation}
 
-The probability of successfully measuring the target state after $k$ iterations is therefore $P_k = \sin^2((2k+1)\theta)$. To maximize this probability ($P_k \approx 1$), we require the argument of the sine function to approach $\pi/2$:
+The probability of successfully observing the correct target state after $k$ iterations is given by the squared amplitude: $P_k = \sin^2((2k+1)\theta)$. 
+To maximize this probability (such that $P_k \approx 1$), we want the state vector to align as closely as possible with the $|x^*\rangle$ axis, which means the argument of the sine function should equal $\pi/2$:
 \begin{equation}
     (2k+1)\theta \approx \frac{\pi}{2} \implies k \approx \frac{\pi}{4\theta} - \frac{1}{2}
 \end{equation}
 
-For a large search space $N$, using the small-angle approximation $\theta \approx \sin(\theta) = 1/\sqrt{N}$, we derive the optimal number of iterations:
+Assuming a sufficiently large search space $N$, we can invoke the small-angle approximation $\theta \approx \sin(\theta) = 1/\sqrt{N}$. 
+Substituting this into our equation yields the optimal number of Grover iterations:
 \begin{equation}
     k \approx \frac{\pi}{4}\sqrt{N}
 \end{equation}
 
-It is crucial to note that amplitude amplification is periodic. If the number of iterations significantly exceeds $\frac{\pi}{4}\sqrt{N}$, the state vector rotates past the target state $|x^*\rangle$, decreasing the probability of success---a phenomenon known as the overshooting effect \cite{boyer1998tight}. 
+This geometric formulation exposes a critical caveat: amplitude amplification is periodic, not strictly monotonic. 
+If the algorithm continues executing iterations beyond $k \approx \frac{\pi}{4}\sqrt{N}$, the state vector will rotate past the $|x^*\rangle$ axis and back toward the uniform superposition, actively decreasing the probability of success. 
+This behavior is colloquially known in the literature as the \textit{overshooting effect} \cite{boyer1998tight}. 
 
-The time complexity of the algorithm is strictly dominated by the $k$ oracle queries, leading to an $\mathcal{O}(\sqrt{N})$ complexity bound. As proven by Zalka and others \cite{zalka1999grover, bennett1997strengths}, this $\mathcal{O}(\sqrt{N})$ boundary is asymptotically tight, meaning Grover's algorithm provides the optimal theoretical limit for any quantum search over unstructured data.
+The overall time complexity is entirely dominated by the $k$ oracle evaluations, resulting in an $\mathcal{O}(\sqrt{N})$ runtime bound. 
+Furthermore, as formally proven by Zalka and Bennett et al. \cite{zalka1999grover, bennett1997strengths}, this $\mathcal{O}(\sqrt{N})$ bound is asymptotically tight. 
+It represents the absolute theoretical limit for quantum search—no quantum algorithm can solve the unstructured search problem in fewer queries.
 
-\subsection{Implementation Details}
-The algorithm was implemented using the Qiskit framework. The architectural design deliberately separates the oracle definition from the general algorithmic logic. The implementation of the Grover Diffusion Operator ($U_s$) requires constructing the operation $2|s\rangle\langle s| - I$ using standard, hardware-compatible quantum gates.
+\subsection{Synthesis and Implementation}
+Bridging the theoretical formulation of the algorithm with a practical implementation necessitates decomposing the abstract operators into elementary hardware instructions. 
+In our research, the algorithm was realized using the Qiskit quantum framework \cite{qiskit2023}.
 
-As demonstrated in Listing \ref{lst:diffuser}, the diffuser is built step-by-step. First, Hadamard gates transition the system to the phase basis. Next, Pauli-X gates map the $|0\rangle^{\otimes n}$ state to the $|1\rangle^{\otimes n}$ state. A multi-controlled Z gate (synthesized via a multi-controlled X gate flanked by Hadamard gates on the target qubit) applies the negative phase. Finally, the inversion and basis change are reversed.
+The design architecture isolates the problem-specific Oracle from the highly generalized Grover Diffuser ($U_s$). 
+Synthesizing the diffuser expression $2|s\rangle\langle s| - I$ requires a specific sequence of basis transformations. 
+As shown in Listing \ref{lst:diffuser}, the quantum circuit is constructed systematically:
+\begin{enumerate}
+    \item A global layer of Hadamard gates transforms the computational basis into the phase basis, effectively converting the $|s\rangle$ state requirement into a $|0\rangle^{\otimes n}$ state requirement.
+    \item Pauli-X gates flip the register, mapping the $|0\rangle^{\otimes n}$ state to the $|1\rangle^{\otimes n}$ state so that multi-controlled gates can properly target it.
+    \item A multi-controlled Z gate applies the necessary negative phase shift solely to this state. 
+    In Qiskit, this is synthesized using a multi-controlled X (MCX) gate, bordered by Hadamard gates on the target qubit to shift the bit-flip into a phase-flip \cite{barenco1995elementary}.
+    \item Finally, the Pauli-X and Hadamard layers are mirrored to reverse the basis transformations and complete the reflection.
+\end{enumerate}
 
-\begin{lstlisting}[language=Python, caption={Construction of the Diffusion Operator ($U_s$) using fundamental logic gates in Qiskit.}, label={lst:diffuser}]
+\begin{lstlisting}[
+    language=Python, 
+    caption={Construction of the Diffusion Operator ($U_s$) using fundamental logic gates in Qiskit.}, 
+    label={lst:diffuser}, 
+    basicstyle=\ttfamily\footnotesize, 
+    frame=single, 
+    numbers=left, 
+    numberstyle=\tiny\color{gray}, 
+    commentstyle=\color{green!60!black}\itshape, 
+    keywordstyle=\color{blue}\bfseries, 
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true
+]
 def _build_diffuser(self) -> QuantumCircuit:
     qc = QuantumCircuit(self.num_qubits, name="Diffuser")
 
-    # Step 1: Change to phase basis
+    # 1. Transform back to the computational basis
     qc.h(range(self.num_qubits))
     
-    # Step 2: Invert states
+    # 2. Invert states to target the |0...0> component
     qc.x(range(self.num_qubits))
 
-    # Step 3: Apply Multi-Controlled Z
+    # 3. Apply Multi-Controlled Z to flip the phase
     target_qubit = self.num_qubits - 1
     control_qubits = list(range(self.num_qubits - 1))
     
@@ -109,11 +173,12 @@ def _build_diffuser(self) -> QuantumCircuit:
         qc.mcx(control_qubits, target_qubit)
     qc.h(target_qubit)
 
-    # Step 4: Revert state inversion and basis change
+    # 4. Revert the state inversion and basis change
     qc.x(range(self.num_qubits))
     qc.h(range(self.num_qubits))
 
     return qc
 \end{lstlisting}
 
-This explicit, manual construction of the diffuser avoids relying on automated synthesis tools or opaque library functions. It ensures full control over the exact gate sequence and accurately models the inversion about the mean required by the mathematical framework.
+This explicit programmatic construction avoids relying on opaque black-box synthesis libraries. 
+It ensures total analytical control over the gate sequence, guaranteeing that the circuit accurately reflects the inversion about the mean dictated by the underlying geometry of the algorithm.
