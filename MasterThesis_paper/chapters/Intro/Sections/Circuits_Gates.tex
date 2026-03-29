@@ -1,7 +1,8 @@
 \section{Quantum Logic Gates and Circuits}
 Classical algorithms are typically described using combinations of basic Boolean logic gates (such as AND, OR, and NOT). 
 Analogously, quantum algorithms are formalized using the \textit{quantum circuit model}, 
-where computation is executed via a sequence of unitary operations called quantum logic gates applied to a register of qubits, followed by measurements. 
+where computation is executed via a sequence of unitary operations called quantum logic gates applied to a register of qubits, 
+followed by measurements \cite{deutsch1989quantum}. 
 
 Because quantum evolution must be reversible, all quantum logic gates, with the exception of measurement, must be reversible. 
 Consequently, quantum gates are represented by unitary matrices.
@@ -18,29 +19,26 @@ which correspond to rotations by $\pi$ radians around the $x$, $y$, and $z$ axes
 The $X$ gate acts as a quantum bit-flip, mapping $\ket{0} \to \ket{1}$ and $\ket{1} \to \ket{0}$. 
 The $Z$ gate acts as a phase-flip, leaving $\ket{0}$ unchanged but mapping $\ket{1} \to -\ket{1}$. 
 
-Arguably the most ubiquitous single-qubit gate in quantum algorithms is the Hadamard gate, denoted $H$. 
-It creates an equal superposition when applied to computational basis states:
+Arguably the most ubiquitous single-qubit gate in quantum algorithms is the Hadamard gate, 
+denoted $H$. It creates an equal superposition when applied to computational basis states:
 \begin{equation}
     H = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
 \end{equation}
 Applying $H$ to $\ket{0}$ yields the state $\ket{+} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$, 
-and applying it to $\ket{1}$ yields $\ket{-} = \frac{1}{\sqrt{2}}(\ket{0} - \ket{1})$. 
+and applying it to $\ket{1}$ yields $\ket{-} = \frac{1}{\sqrt{2}}(\ket{0} - \ket{1})$ \cite{mermin2007quantum}. 
 
 Other essential single-qubit gates include the Phase gate ($S$) and the $\pi/8$ gate ($T$), which introduce relative phases:
 \begin{equation}
     S = \begin{pmatrix} 1 & 0 \\ 0 & i \end{pmatrix}, \quad T = \begin{pmatrix} 1 & 0 \\ 0 & e^{i\pi/4} \end{pmatrix}
 \end{equation}
 
-\subsection{Multi-Qubit Gates: The CNOT Gate}
+\subsection{Two-Qubit Gates: CNOT, SWAP, and Controlled-Phase}
 To generate entanglement and perform conditional logic, gates must act on multiple qubits. 
 The paradigmatic two-qubit gate is the Controlled-NOT (CNOT) gate. 
 
-
-
 The CNOT gate acts on a control qubit and a target qubit. 
-If the control qubit is $\ket{1}$, it applies an $X$ gate (bit-flip) to the target qubit; if the control is $\ket{0}$, 
-it leaves the target unchanged. 
-
+If the control qubit is $\ket{1}$, it applies an $X$ gate (bit-flip) to the target qubit. 
+If the control is $\ket{0}$, it leaves the target unchanged. 
 In the computational basis $\{\ket{00}, \ket{01}, \ket{10}, \ket{11}\}$, 
 where the first qubit is the control, the matrix representation is:
 \begin{equation}
@@ -52,5 +50,66 @@ where the first qubit is the control, the matrix representation is:
     \end{pmatrix}
 \end{equation}
 The CNOT gate is critical because it is the primary mechanism for creating entangled states. 
-For example, applying a Hadamard gate to the first qubit of the state $\ket{00}$ followed by a CNOT gate produces the Bell state 
-$\ket{\Phi^+} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$.
+For example, applying a Hadamard gate to the first qubit of the state $\ket{00}$ followed by a CNOT gate produces 
+the Bell state $\ket{\Phi^+} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$.
+
+Another fundamental two-qubit gate is the SWAP gate, which exchanges the states of two qubits. 
+It is particularly important in quantum hardware routing and forms the final bit-reversal step of the 
+Quantum Fourier Transform (QFT) used in Shor's algorithm:
+\begin{equation}
+    \text{SWAP} = \begin{pmatrix} 
+    1 & 0 & 0 & 0 \\ 
+    0 & 0 & 1 & 0 \\ 
+    0 & 1 & 0 & 0 \\ 
+    0 & 0 & 0 & 1 
+    \end{pmatrix}
+\end{equation}
+
+While the CNOT conditionally applies a bit-flip, the Controlled-Phase gate, denoted $CP(\theta)$ or $CR_z(\theta)$, 
+applies a conditional phase shift. If both the control and target qubits are in the $\ket{1}$ state, 
+a phase $e^{i\theta}$ is applied to the system:
+\begin{equation}
+    CP(\theta) = \begin{pmatrix} 
+    1 & 0 & 0 & 0 \\ 
+    0 & 1 & 0 & 0 \\ 
+    0 & 0 & 1 & 0 \\ 
+    0 & 0 & 0 & e^{i\theta} 
+    \end{pmatrix}
+\end{equation}
+The $CP$ gate is the mathematical cornerstone of the QFT, 
+enabling the precise extraction of periodic phases necessary for integer factorization.
+
+\subsection{Advanced and Multi-Controlled Gates}
+To implement complex logical constructs, such as Oracles in Grover's algorithm and modular exponentiation in Shor's algorithm, 
+we require gates that condition operations on multiple qubits.
+
+The Toffoli gate, or Controlled-Controlled-NOT (CCNOT), operates on two control qubits and one target qubit. 
+It applies an $X$ gate to the target if and only if both control qubits are in the $\ket{1}$ state. 
+Because the Toffoli gate is universal for classical reversible computation, 
+it is vital for constructing quantum oracles that evaluate classical boolean functions:
+\begin{equation}
+    \text{CCNOT} = \begin{pmatrix} 
+    1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 
+    \end{pmatrix}
+\end{equation}
+
+In generalized quantum algorithms, the Toffoli gate is extended to the Multi-Controlled X gate ($MCX$), 
+which targets a single qubit conditioned on $n$ control qubits. 
+
+Similarly, Grover's diffusion operator relies on a Multi-Controlled Z gate ($MCZ$), 
+which flips the phase of the system only when all $n$ qubits are in the $\ket{1}$ state. 
+
+In practical implementations, an $MCZ$ gate can be synthesized by conjugating the target qubit of an $MCX$ gate with Hadamard gates: 
+$MCZ = (I \otimes \dots \otimes H) MCX (I \otimes \dots \otimes H)$ \cite{barenco1995elementary}.
+
+Finally, Shor's algorithm relies heavily on the generalized Controlled-$U$ operation ($c-U$). 
+If an arbitrary unitary operation $U$ acts on an $n$-qubit target register, the $c-U$ gate applies $U$ only 
+if a designated control qubit is $\ket{1}$. This is the fundamental mechanism driving the Quantum Phase Estimation subroutine, 
+allowing the algorithm to evaluate the modular exponentiation $a^x \pmod N$ in parallel across a quantum superposition.
