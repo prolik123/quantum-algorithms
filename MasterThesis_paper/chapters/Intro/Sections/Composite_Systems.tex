@@ -1,25 +1,52 @@
 \section{Composite Systems and Tensor Products}
-While a single isolated qubit provides the fundamental building block of quantum information, the true computational power of the quantum paradigm emerges only when multiple qubits are combined and allowed to interact.
 
-To mathematically describe the collective state space of a multi-partite quantum system, we utilize the \textit{tensor product} (often referred to as the Kronecker product in matrix algebra), denoted by the symbol $\otimes$ \cite{nielsen2010quantum}.
+While a single qubit provides the baisc building block to use in quantum computing, full capabilities are achieved when 
+multiple qubits are used and allowed to interact.
+%
+%
+To describe the state of many quibits, we use the \textit{tensor product} (also knownas the Kronecker product), 
+denoted by the symbol $\otimes$ \cite{nielsen2010quantum}.
+%
+%
+If we have a system $A$ in a Hilbert space $\mathcal{H}_A$ of dimension $N$, 
+and a second system $B$ in Hilbert space $\mathcal{H}_B$ of dimension $M$, 
+then their composed system $AB$ is in the tensor product space $\mathcal{H}_A \otimes \mathcal{H}_B$.
+%
+%
+The total dimension of this combined space is $N \times M$, rather than $N + M$ typically seen composing to spaces.
+%
+%
+For example having two separate qubits, where both are in $\mathbb{C}^2$, 
+the composite two qubit state is in a four dimensional complex vector space, 
+$\mathbb{C}^2 \otimes \mathbb{C}^2 \cong \mathbb{C}^4$.
+%
+%
 
-If an isolated physical system $A$ is completely described by a Hilbert space $\mathcal{H}_A$ of dimension $N$, and a second isolated system $B$ is described by a Hilbert space $\mathcal{H}_B$ of dimension $M$, their newly formed composite system $AB$ resides mathematically in the tensor product space $\mathcal{H}_A \otimes \mathcal{H}_B$.
-Crucially, the total dimension of this combined space is the multiplicative product $N \times M$, rather than the additive sum $N + M$ typically seen when bolting classical systems together.
-
-For a simple register of two interacting qubits, where each individually resides in $\mathbb{C}^2$, the composite two-qubit state exists within a four-dimensional complex vector space, $\mathbb{C}^2 \otimes \mathbb{C}^2 \cong \mathbb{C}^4$.
-
-The computational basis for this joint system is constructed by taking every possible pairwise combination of the individual basis vectors:
+The computational basis for this two qubit system is created by taking every possible pairs of the basis vectors:
 \begin{equation}
     \{\ket{0} \otimes \ket{0}, \ket{0} \otimes \ket{1}, \ket{1} \otimes \ket{0}, \ket{1} \otimes \ket{1}\}
 \end{equation}
-
-For notational brevity, it is standard practice to entirely drop the explicit tensor product symbol and condense these basis kets into joint strings, writing them simply as $\ket{00}, \ket{01}, \ket{10},$ and $\ket{11}$.
-Consequently, the most general pure state of a two-qubit register, $\ket{\psi}$, is a vast superposition extending across all four of these discrete basis states:
+%
+%
+We can simplify the notation of many qubit systems, as we usually skip the tensor product between the states and write them simply as 
+$\ket{00}, \ket{01}, \ket{10},$ and $\ket{11}$.
+%
+%
+The most general state of a two qubits, $\ket{\psi}$, is a superposition of all four of basis states:
 \begin{equation}
     \ket{\psi} = \alpha_{00}\ket{00} + \alpha_{01}\ket{01} + \alpha_{10}\ket{10} + \alpha_{11}\ket{11}
 \end{equation}
-Just as with a single qubit, the system must definitively exist somewhere upon measurement, forcing the absolute sum of the squared probability amplitudes to equal exactly 100\%: $\sum_{i,j \in \{0,1\}} |\alpha_{ij}|^2 = 1$.
+Same as with the single qubit, the system with many qubits must hold the sum of the squared probability amplitudes equal to 100\%: 
+$\sum_{i,j \in \{0,1\}} |\alpha_{ij}|^2 = 1$.
+%
+%
 
-This multiplicative tensor structure reveals a profound physical truth: adding just a single qubit to a register effectively doubles the total number of amplitudes required to fully track the system's state.
-For a register consisting of $n$ qubits, the state space explodes to an astonishing $2^n$ complex dimensions.
-This exponential scaling mathematically underpins the massive parallelism intrinsic to quantum algorithms, representing a primary source of their theoretical computational supremacy over classical hardware \cite{arora2009computational}.
+This clearly shows the interesting property of many qubit system. Adding just a single qubit to a register 
+doubles the total number of amplitudes required to fully track the system's state.
+%
+%
+For a register of $n$ qubits, the state space consist of $2^n$ complex dimensions.
+%
+%
+This exponential growth shows the possible parallelism of quantum algorithms, 
+representing a possible source of their "theoretical" computational advantage over classical algorithms \cite{arora2009computational}.

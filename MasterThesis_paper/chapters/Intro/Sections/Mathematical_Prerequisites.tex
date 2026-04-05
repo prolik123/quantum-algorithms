@@ -1,23 +1,40 @@
 \section{Mathematical Prerequisites}
-To rigorously study quantum algorithms, one must first be fluent in the mathematical language governing quantum mechanics: linear algebra.
-Unlike classical computing systems, whose states are typically described by discrete deterministic variables, quantum systems are inherently probabilistic.
-Consequently, their foundational behavior is formalized using complex vector spaces, inner products, and linear operator theory \cite{nielsen2010quantum}.
 
+To get deeper into quantum algorithms, one must first understand in the mathematical language of quantum mechanics, which is linear algebra.
+%
+%
+
+Unlike classical computing systems, whose states are described by discrete deterministic variables, quantum systems are probabilistic.
+Which causes, that their foundational behavior is formalized using complex vector spaces, inner products, and linear operator theory \cite{nielsen2010quantum}.
+%
+%
 \subsection{Hilbert Spaces and Dirac Notation}
-The state of any isolated quantum system is completely described by a unit vector residing in a complex \textit{Hilbert space}, denoted by $\mathcal{H}$.
 
-Intuitively, a Hilbert space can be thought of as a mathematical generalization of standard Euclidean space.
-The familiar geometric notions of length and angle still apply, but the space is extended to accommodate complex numbers and theoretically infinite dimensions.
-For the finite-dimensional systems relevant to quantum computing—such as a register of $n$ interacting qubits—the Hilbert space is isomorphic to $\mathbb{C}^{2^n}$.
-This means it is a $2^n$-dimensional complex vector space, an exponential growth factor that naturally hints at the parallel processing power of quantum computers.
+The state of any isolated quantum system is completely described by a unit vector residing in a complex \textit{Hilbert space}, 
+denoted by $\mathcal{H}$.
+%
+%
+Hilbert space can be thought of as a generalization of a standard Euclidean space.
+The familiar geometric notions of length and angle still apply, but the space is extended to accommodate complex numbers.
+%
+%
+For the finite dimension systems relevant to quantum computing one, such as a register of $n$ interacting qubits, 
+the Hilbert space is isomorphic to $\mathbb{C}^{2^n}$.
+This means that it is $2^n$ dimensional complex vector space and the exponential growth factor 
+hints at the parallel processing power of quantum computing.
+%
+%
 
-To concisely manipulate these state vectors, quantum information science standardly employs Dirac's \textit{bra-ket} notation \cite{dirac1939new}.
-This framework provides an elegant algebraic shorthand that maps perfectly to the underlying linear algebra operations:
-
+To manipulate these state vectors, we use Dirac's \textit{bra-ket} notation \cite{dirac1939new}.
+It's provides a algebraic shortcut that maps perfectly to the underlying linear algebra operations:
+%
+%
 \begin{itemize}
     \item \textbf{Ket} ($\ket{\psi}$): A standard column vector representing a distinct quantum state.
     \item \textbf{Bra} ($\bra{\psi}$): The Hermitian conjugate (conjugate transpose) of the ket, representing a row vector residing in the dual space $\mathcal{H}^*$.
 \end{itemize}
+%
+%
 
 For a vector $\psi \in \mathbb{C}^d$, we write:
 \begin{equation}
@@ -26,56 +43,109 @@ For a vector $\psi \in \mathbb{C}^d$, we write:
         \bra{\psi} &= \ket{\psi}^\dagger = \begin{pmatrix} z_1^* & \dots & z_d^* \end{pmatrix}
     \end{split}
 \end{equation}
-Here, $z^*$ represents the complex conjugate of the number $z$.
-
+where, $z^*$ is the complex conjugate of $z$.
+%
+%
 \subsection{Inner and Outer Products}
-The \textbf{inner product} of two state vectors $\ket{\phi}$ and $\ket{\psi}$ is a scalar $c \in \mathbb{C}$, denoted by the combined bracket $\braket{\phi}{\psi}$.
-Geometrically, this operation measures the "overlap" or mathematical similarity between two quantum states.
-It satisfies the following core properties:
+
+The \textbf{inner product} of two state vectors $\ket{\phi}$ and $\ket{\psi}$ is a scalar $c \in \mathbb{C}$, 
+denoted by the combined bracket $\braket{\phi}{\psi}$.
+%
+%
+This operation measures the "overlap" or similarity between two quantum states and it satisfies the following properties:
+%
+%
 \begin{enumerate}
     \item Conjugate symmetry: $\braket{\phi}{\psi} = \braket{\psi}{\phi}^*$.
     \item Linearity in the second argument: $\bra{\phi} (a\ket{\psi_1} + b\ket{\psi_2}) = a\braket{\phi}{\psi_1} + b\braket{\phi}{\psi_2}$.
     \item Positive definiteness: $\braket{\psi}{\psi} \geq 0$, with equality if and only if $\ket{\psi} = 0$.
 \end{enumerate}
+%
+%
 
-Two vectors are considered mathematically \textit{orthogonal} when their inner product evaluates to zero ($\braket{\phi}{\psi} = 0$). 
-This specific condition signifies that they represent entirely mutually exclusive quantum states.
-The norm, which corresponds to the geometric length of a state vector, is defined mathematically as $||\psi|| = \sqrt{\braket{\psi}{\psi}}$.
-For any vector to represent a physically valid quantum state, it must be properly normalized to unity ($||\psi|| = 1$).
+Two vectors are considered \textit{orthogonal} when their inner product is equal to 0 ($\braket{\phi}{\psi} = 0$). 
+%
+%
+This condition signifies that they represent mutually exclusive quantum states.
+%
+%
+The norm corresponds to the geometric length of a state vector and it is defined as $||\psi|| = \sqrt{\braket{\psi}{\psi}}$.
+%
+%
+For any vector to represent a valid quantum state, 
+it must be properly normalized to unity, which mean that it's norm have to be equal to one ($||\psi|| = 1$).
+%
+%
 Normalizing the state vector ensures that all possible measurement probabilities will always sum to exactly 100\%.
+%
+%
 
-The \textbf{outer product} of $\ket{\psi}$ and $\ket{\phi}$ forms a linear operator (a matrix), denoted as $A = \ket{\psi}\bra{\phi}$.
+The \textbf{outer product} of $\ket{\psi}$ and $\ket{\phi}$ forms a linear operator (a matrix) denoted as $A = \ket{\psi}\bra{\phi}$.
+%
+%
 Applying this operator to a new vector $\ket{\xi}$ yields a vector proportional to $\ket{\psi}$:
 \begin{equation}
     (\ket{\psi}\bra{\phi})\ket{\xi} = \ket{\psi}(\braket{\phi}{\xi}) = c \ket{\psi}
 \end{equation}
-where $c = \braket{\phi}{\xi}$ is simply a scalar multiplier.
-Outer products are heavily utilized in quantum algorithms to construct projection operators, which map directly to physical quantum measurements.
+where $c = \braket{\phi}{\xi}$ is scalar multiplier.
+%
+%
 
+Outer products are utilized in quantum algorithms to construct projection operators, which map directly to quantum measurements.
+%
+%
 \subsection{Linear Operators}
-Quantum states do not exist statically; they constantly evolve.
-This evolution is mathematically described by linear operators acting upon the Hilbert space $\mathcal{H}$.
-An operator $A$ is considered linear if it preserves the principle of superposition, meaning $A(c_1\ket{\psi_1} + c_2\ket{\psi_2}) = c_1 A\ket{\psi_1} + c_2 A\ket{\psi_2}$.
+
+Quantum states do not exist statically, as they constantly evolve.
+This evolution is described by linear operators acting upon the Hilbert space $\mathcal{H}$.
+%
+%
+
+An operator $A$ is considered linear if it preserves the principle of superposition, meaning 
+%
+%
+$A(c_1\ket{\psi_1} + c_2\ket{\psi_2}) = c_1 A\ket{\psi_1} + c_2 A\ket{\psi_2}$.
+%
+%
 
 \subsubsection{Hermitian Operators and Observables}
-An operator $A$ is \textit{Hermitian} (or self-adjoint) if it is perfectly equal to its own conjugate transpose, $A = A^\dagger$.
 
-Hermitian operators are deeply crucial in quantum mechanics because they represent measurable physical quantities, known as \textit{observables} (such as a particle's energy, position, or spin).
-The Spectral Theorem states that for any Hermitian operator $M$ on a finite-dimensional space, there inherently exists an orthonormal basis of eigenvectors $\{\ket{m_i}\}$ paired with purely real eigenvalues $m_i$ such that:
+An operator $A$ is \textit{Hermitian} (or self-adjoint) if it is equal to its conjugate transpose, $A = A^\dagger$.
+%
+%
+The Spectral Theorem states that for any Hermitian operator $M$ on a finite dimensional space, 
+there inherently exists an orthonormal basis of eigenvectors $\{\ket{m_i}\}$ paired with 
+purely real eigenvalues $m_i$ such that:
+%
+%
 \begin{equation}
     M = \sum_i m_i \ket{m_i}\bra{m_i}
 \end{equation}
-This elegant mathematical decomposition has a profound physical consequence: the outcome of measuring the observable $M$ will always be exactly one of those real values $m_i$.
-Real values are strictly required here, as it makes no logical or physical sense to read an imaginary number off a laboratory measurement instrument.
+%
+%
 
+This decomposition has a physical consequences. The result of measuring the observable $M$ will always be one of those real values $m_i$.
+%
+%
 \subsubsection{Unitary Operators and Evolution}
-An operator $U$ is \textit{unitary} if its mathematical inverse is exactly equal to its adjoint:
+
+An operator $U$ is \textit{unitary} if its inverse is exactly equal to its adjoint:
+%
+%
 \begin{equation}
     U^\dagger U = U U^\dagger = I
 \end{equation}
-Unitary operators inherently preserve the inner product: $\bra{\psi} U^\dagger U \ket{\phi} = \braket{\psi}{\phi}$.
-Consequently, they fundamentally preserve the norm (length) of any state vector they act upon.
+%
+%
 
-This preservation is absolutely essential for quantum computing.
-Because the norm corresponds directly to total probability, unitary evolution acts as a strict mathematical guarantee that the sum of probabilities for all possible outcomes remains exactly $1$ throughout the entire duration of the computation.
-Therefore, all logic gates applied to a closed quantum register must be formulated as unitary matrices \cite{nielsen2010quantum}.
+Unitary operators preserve the inner product: $\bra{\psi} U^\dagger U \ket{\phi} = \braket{\psi}{\phi}$, 
+which means they preserve the norm (length) of any state vector they act upon.
+%
+%
+This preservation is essential for quantum computing, because the norm corresponds directly to total probability.
+%
+%
+Application of an unitary operator acts as a guarantee that the sum of probabilities for all possible outcomes remains exactly $1$ throughout the entire duration of the computation.
+%
+%
+Therefore, all logic gates applied to a quantum register must be formulated as unitary matrices \cite{nielsen2010quantum}.

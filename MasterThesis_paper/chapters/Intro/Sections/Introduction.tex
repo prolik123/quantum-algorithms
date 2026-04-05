@@ -1,27 +1,44 @@
 \section{Introduction}
 
-Information processing is fundamentally a physical process. 
-For decades, the engineering of classical computers has relied on the predictable, deterministic laws of classical physics to manipulate discrete zeros and ones. 
-This paradigm, famously characterized by Moore's Law, involved shrinking transistors year after year to pack more computational power onto a single chip. 
-However, as these electronic components reach the atomic scale, the classical physics models begin to break down. 
-At the sub-nanometer level, quantum mechanical phenomena like electron tunneling cease to be minor engineering nuisances and instead become dominant forces that actively disrupt classical logic operations.
+Information processing is one of the most common problems of our times. 
+%
+%
 
-In the early 1980s, visionary physicists like Paul Benioff \cite{benioff1980} and Richard Feynman \cite{feynman1982} realized that rather than fighting these quantum effects, we could harness them. 
+For decades, the engineers has relied on the predictable, deterministic laws of classical physics to manipulate discrete zeros and ones inside the computers. 
+Current computers are still improving their computational power and it is famously characterized by Moore's Law, 
+involved shrinking transistors year after year to pack more computational power onto a single chip. 
+However, as these electronic components reach the atomic scale, the classical physics models begin to break down, as all in practice have their limit in size. 
+At the sub-nanometer level, quantum mechanical phenomena like electron tunneling cease to be minor engineering nuisances and instead become dominant forces that actively 
+disrupt classical logic operations.
+%
+%
+
+In the early 1980s, physicists like Paul Benioff \cite{benioff1980} and Richard Feynman \cite{feynman1982} realized that rather than fighting these quantum effects, we could try to harness them.
 Feynman noted a profound asymmetry in computation: simulating quantum mechanical systems on classical hardware inherently requires an exponential amount of memory and processing time. 
-His intuition for solving this was elegant: if nature operates quantum mechanically, a computer natively built from quantum components could simulate nature naturally and efficiently. 
-This physical intuition shifted into the realm of computer science in 1985 when David Deutsch formalized the Universal Quantum Turing Machine \cite{deutsch1985}. 
-Deutsch mathematically proved that a quantum machine could perform any computation a classical one could, but with access to entirely new, non-classical algorithmic pathways.
+His intuition was like: If nature operates quantum mechanically, a computer natively built from quantum components could simulate nature or it's effects more efficiently. 
+This physical intuition lead to creating new computing model, Universal Quantum Turing Machine \cite{deutsch1985}, formalized by David Deutsch in 1985.
+Deutsch mathematically proved that a quantum machine could perform any computation a classical one could and probably use some non-classical algorithmic pathways.
+%
+%
 
-The building block of this new paradigm is the quantum bit, or qubit. 
-Unlike a classical bit, which behaves like a standard switch existing strictly in a 0 or 1 state, a qubit can exist in a \textit{superposition} of states. 
-A helpful intuition is to think of superposition not merely as "being in two states at once", but rather as a wave-like probability distribution where the exact state remains fluid until it is physically measured. 
-Furthermore, multiple qubits can experience \textit{entanglement}, a phenomenon where their quantum states become so deeply interconnected that the information of the overall system is stored primarily in the mathematical relationships between the qubits, rather than within the individual qubits themselves. 
-These two properties allow quantum algorithms to map and explore vast, complex state spaces in ways classical machines simply cannot replicate.
+The building block of this quantum computing is qubit, which is the object corresponding to the bit in classic computing.
+Unlike a bit, which behaves like a standard switch being only in a 0 or 1 state, a qubit can exist in a \textit{superposition} of states (it's unknown state).
+A helpful intuition is to think of superposition not as "being in two states at once", but rather as a wave-like probability distribution where the exact state remains fluid until it is measured. 
+Furthermore, multiple qubits can experience \textit{entanglement}, a situation where their quantum states become related and the information of the overall system is stored primarily in 
+the mathematical relationships between the qubits, rather than within the individual qubits themselves. 
+These two properties allow quantum algorithms to map, explore vast and complex state spaces in ways normal computers could have problems.
+%
+%
 
-The theoretical curiosity surrounding quantum computation exploded into a global race in 1994, when Peter Shor published his quantum algorithm for integer factorization \cite{shor1994}. 
-Shor's algorithm mathematically proved that a quantum computer could efficiently solve specific algebraic problems considered practically impossible for even the largest classical supercomputers. 
-This discovery was groundbreaking because it meant quantum advantage was not limited to simulating physics; it posed a direct, real-world application capable of breaking the RSA cryptographic infrastructure that secures modern digital communication.
+When Peter Shor published his quantum algorithm for integer factorization \cite{shor1994} in 1994, the quantum algorithms interest suddenly rised up and 
+the goal of creating a quantum computer and utilize it's full possibilities became even more tempting. 
+Shor's algorithm proves that a quantum computer could efficiently solve specific algebraic problems considered time consuming for classical approaches.
+This discovery was really great, because it meant quantum advantage was not limited to simulating physics and it could have real-world application capable of breaking the RSA cryptographic 
+infrastructure that e.g. secures modern digital communication.
+%
+%
 
-To fully grasp how algorithms like Shor's and Grover's achieve these remarkable computational speedups, one must first understand the fundamental rules of the quantum landscape. 
-This chapter lays the theoretical groundwork necessary to follow the remainder of this thesis. 
-We begin by covering the linear algebra that governs quantum mechanics, rigorously define the qubit and entangled systems, and finally establish the quantum circuit model and the formal complexity classes that define quantum advantage.
+To fully understand how algorithms like Shor's and Grover's works, one must first understand basics of quantum computing.
+This chapter contains the theoretical background necessary to follow selected examples and algorithms. 
+We begin by covering the linear algebra that governs quantum mechanics, define the qubit and entangled systems and finally define the quantum circuit model 
+and the formal complexity classes that define quantum advantage.
