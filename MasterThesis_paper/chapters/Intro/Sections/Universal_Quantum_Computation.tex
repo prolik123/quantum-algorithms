@@ -1,31 +1,36 @@
 \section{Universal Quantum Computation}
 
-In classical computing, the concept of universality is remarkably straightforward.
-A small, finite set of fundamental logic gates—or even a single logical operator like the NAND gate—is perfectly 
-sufficient to build and evaluate any arbitrary Boolean function.
+In classical computing, the idea of universal computation is quite simple.
+A small, finite set of logic gates, or even just one gate like NAND, is enough to build and construct any possible boolean function.
 
-Transitioning to the quantum regime, however, introduces a fundamental physical complication: 
-the quantum state space is completely continuous.
-Because valid quantum operations correspond to arbitrary geometric rotations within a high-dimensional Hilbert space, 
-hitting a specific target state is much like trying to manually rotate a dial to a mathematically perfect, irrational angle.
-Executing exact, arbitrary unitary transformations would theoretically require a continuously parameterized—and therefore 
-infinite—set of logic gates.
+%
+%
+Meanwhile in  the quantum computing, we meet a big problem on our way.
+The quantum state space is continuous.
+Valid quantum operations are rotations in a Hilbert space, due to that
+trying to hit a specific target state become quite problematic.
+To execute exact, arbitrary unitary transformations, we would in theory need an infinite set of logic gates which could be impossible for us.
 
-To bridge this theoretical gap between continuous unitary operations and the discrete, 
-fault-tolerant reality of physical hardware, quantum algorithm design relies heavily on the Solovay-Kitaev theorem \cite{dawson2005}.
-This foundational theorem dictates that we do not actually need an infinite variety of gates to navigate the state space.
-Instead, any arbitrary quantum operation can be reliably approximated to a desired accuracy, $\epsilon$, using a small, finite, 
-and discrete set of basic quantum gates.
-Crucially, it mathematically proves that the number of fundamental gates required to achieve this approximation scales only 
+%
+%
+To fix this gap between continuous unitary operations and the discrete hardware, 
+quantum algorithms use the Solovay-Kitaev theorem \cite{dawson2005}.
+
+%
+%
+This theorem says that we do not need an infinite amount of gates to move through the state space and perform our operation.
+Instead of that, we can represent any arbitrary quantum operation as an approximated one with some desired accuracy, $\epsilon$, 
+using only finite set of basic quantum gates. 
+What is also important, it describes that the number of basic gates needed to get this approximation scales only 
 polylogarithmically with $1/\epsilon$.
-This minimal computational overhead ensures that our need to discretely approximate operations does not accidentally 
-destroy the exponential algorithmic speedups inherent to quantum computation.
+This small cost ensures, that approximating the operations will not destroy our time complexity of algorithms.
 
-Consequently, modern fault-tolerant quantum computing architectures standardly utilize the so-called Clifford+$T$ universal gate set.
-This standard library typically consists of the Hadamard ($H$), the $\pi/8$ phase gate ($T$), and the two-qubit CNOT gate.
-There is a fascinating dichotomy within this set.
-Networks composed entirely of Clifford gates (like $H$ and CNOT) are mathematically easy to track and can actually be 
-efficiently simulated on a standard classical computer, a strict limitation formalized by the Gottesman-Knill theorem \cite{nielsen2010quantum}.
-However, the strategic addition of the non-Clifford $T$ gate breaks this classical simulatability.
-Adding the $T$ gate effectively unlocks the ability to navigate the continuous quantum space, 
-strictly elevating the discrete set to full quantum universality.
+%
+%
+Due to that problem, modern fault tolerant quantum computers use the Clifford+$T$ universal gate set.
+This standard library consists of the Hadamard ($H$), the $\pi/8$ phase gate ($T$), and the two-qubit CNOT gate.
+We can also observe an interesting fact on this set. 
+Circuits built entirely of Clifford gates (like $H$, CNOT and $\pi/8$) are easy to simulate on a standard computers.
+This limit is formalized by the Gottesman-Knill theorem \cite{nielsen2010quantum}.
+However, after adding $T$ gate to the set, it breaks this classical simulation.
+This also allows us to move freely on the continuous quantum space, giving this set a full quantum universality.

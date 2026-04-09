@@ -8,6 +8,7 @@ from qiskit.circuit.library import UnitaryGate
 
 from src.utils.prime import is_prime_deterministic_to_int_64
 
+# for now it is only a not fully refactored version
 
 class ShorsAlgorithm:
     def __init__(self, N, qubit_num=None):
@@ -26,7 +27,6 @@ class ShorsAlgorithm:
     def _build_modular_unitary(self, a, power, N):
         """
         Classically generates the unitary matrix for |y> -> |y * a^power mod N>.
-        Optimized to use Python's native modular exponentiation to prevent memory overflow.
         """
         size = 2 ** self.n_target
         U = np.zeros((size, size))
