@@ -1,48 +1,96 @@
 \section{Quantum Logic Gates and Circuits}
-Classical algorithms are typically described using combinations of basic Boolean logic gates (such as AND, OR, and NOT). 
-Analogously, quantum algorithms are formalized using the \textit{quantum circuit model}, 
-where computation is executed via a sequence of unitary operations called quantum logic gates applied to a register of qubits, followed by measurements. 
-
-Because quantum evolution must be reversible, all quantum logic gates, with the exception of measurement, must be reversible. 
-Consequently, quantum gates are represented by unitary matrices.
-
+Just as classical algorithms on its basis are constructed with logic gates like AND, OR, NOT and so on, 
+quantum algorithms are built using \textit{quantum circuit model}.
+%
+%
+In quantum computations we apply a sequence of operations, known as quantum logic gates, to a set of initialized qubits.
+%
+%
+The computation then finishes with a measurement to extract the final state and gives us the desired result \cite{deutsch1989quantum}.
+%
+%
+A main rule of quantum systems is that their evolution in time is deterministic and reversible, 
+because of that, each quantum gate must be an invertible operation.
+%
+%
+The only exception to that rule is the measurement operation, which irreversibly collapses the state and provides our result.
+%
+%
+Additionally, because these gates manipulate probability amplitudes, they must preserve the fundamental rule that all probabilities sum exactly to 100\%.
+To satisfy these twin requirements of reversibility and probability conservation, all quantum gates are mathematically represented as \textit{unitary matrices} \cite{nielsen2010quantum}.
+%
+%
 \subsection{Single-Qubit Gates}
-Single-qubit gates act on the state space $\mathbb{C}^2$ and are represented by $2 \times 2$ unitary matrices. 
-The most fundamental of these are the Pauli matrices, 
-which correspond to rotations by $\pi$ radians around the $x$, $y$, and $z$ axes of the Bloch sphere:
+Gates for a single qubit operate on the state space $\mathbb{C}^2$, and can be represented as $2 \times 2$ unitary matrices.
+%
+%
+The most known and useful of gates for a single quibit are three Pauli matrices.
+They correspond to $180^{\circ}$ degree ($\pi$ radian) rotations around each of axes ($x$, $y$, and $z$) of the Bloch sphere:
+%
+%
 \begin{align}
     X &= \begin{pmatrix} 0 & 1 \\ 1 & 0 \end{pmatrix} \\
     Y &= \begin{pmatrix} 0 & -i \\ i & 0 \end{pmatrix} \\
     Z &= \begin{pmatrix} 1 & 0 \\ 0 & -1 \end{pmatrix}
 \end{align}
-The $X$ gate acts as a quantum bit-flip, mapping $\ket{0} \to \ket{1}$ and $\ket{1} \to \ket{0}$. 
-The $Z$ gate acts as a phase-flip, leaving $\ket{0}$ unchanged but mapping $\ket{1} \to -\ket{1}$. 
-
-Arguably the most ubiquitous single-qubit gate in quantum algorithms is the Hadamard gate, denoted $H$. 
-It creates an equal superposition when applied to computational basis states:
+%
+%
+The $X$ gate is the equivalent of the NOT gate in quantum computing. 
+It flips the sate of the quibit which maps $\ket{0} \to \ket{1}$ and $\ket{1} \to \ket{0}$.
+%
+%
+The $Z$ gate on the other hand is like a phase flip.
+It leaves the $\ket{0}$ state unchanged, but flips the sign of $\ket{1}$, mapping it to $-\ket{1}$.
+%
+%
+Gate $Y$ works on a quibit as gate $X$ fliping the state of the quibit but also applyes the complex phase shift to it mapping 
+$\ket{0} \to i\ket{1}$ and $\ket{1} \to -i\ket{0}$.
+%
+%
+Probably the most common operation amongs the operations on a single qubit is the Hadamard gate, denoted $H$.
+It is a basic gate for generating quantum superposition from the input state and typically occurs right on the start of the circuit.
+It creates a equal probability distribution between $\ket{0}$ and $\ket{1}$ state and can be denoted as:
+%
+%
 \begin{equation}
     H = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
 \end{equation}
-Applying $H$ to $\ket{0}$ yields the state $\ket{+} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$, 
-and applying it to $\ket{1}$ yields $\ket{-} = \frac{1}{\sqrt{2}}(\ket{0} - \ket{1})$. 
-
-Other essential single-qubit gates include the Phase gate ($S$) and the $\pi/8$ gate ($T$), which introduce relative phases:
+%
+%
+Applying $H$ to $\ket{0}$ yields the positive superposition state $\ket{+} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$ and 
+applying it to $\ket{1}$ yields the negative superposition state $\ket{-} = \frac{1}{\sqrt{2}}(\ket{0} - \ket{1})$ \cite{mermin2007quantum}.
+%
+%
+Other useful operations are the Phase gate ($S$) and the $\pi/8$ gate ($T$).
+Instead of flipping the state (like the $X$ gate), these gates rotate it around the Z-axis (similarly to the $Z$), 
+changing the relative phases without changing the measurement probabilities. 
+%
+%
+This gate can be denoted as:
 \begin{equation}
     S = \begin{pmatrix} 1 & 0 \\ 0 & i \end{pmatrix}, \quad T = \begin{pmatrix} 1 & 0 \\ 0 & e^{i\pi/4} \end{pmatrix}
 \end{equation}
+%
+%
+\subsection{Two Qubit Gates: CNOT, SWAP, and Controlled-Phase}
+While gates that operates on single qubit can modyfy it state spaces (probabilities and phase), 
+we must now be able to apply gates operating on multiple qubits to be able to perform conditional logic or generate entanglement.
+%
+%
+The basic operation on two qubits is the Controlled-NOT (CNOT) gate.
+%
+%
 
-\subsection{Multi-Qubit Gates: The CNOT Gate}
-To generate entanglement and perform conditional logic, gates must act on multiple qubits. 
-The paradigmatic two-qubit gate is the Controlled-NOT (CNOT) gate. 
+We can say, that the CNOT gate works with a control qubit and a target qubit.
+If the control qubit is in the $\ket{1}$ state, the gate applies the $X$ gate to the target qubit (it flips a bit of target qubit).
+If the control qubit is in the $\ket{0}$ state, the target qubit is left completely untouched.
 
-
-
-The CNOT gate acts on a control qubit and a target qubit. 
-If the control qubit is $\ket{1}$, it applies an $X$ gate (bit-flip) to the target qubit; if the control is $\ket{0}$, 
-it leaves the target unchanged. 
-
-In the computational basis $\{\ket{00}, \ket{01}, \ket{10}, \ket{11}\}$, 
-where the first qubit is the control, the matrix representation is:
+%
+%
+In the standard computational basis $\{\ket{00}, \ket{01}, \ket{10}, \ket{11}\}$, 
+where the first qubit acts as the control, the matrix representation of CNOT looks like:
+%
+%
 \begin{equation}
     \text{CNOT} = \begin{pmatrix} 
     1 & 0 & 0 & 0 \\ 
@@ -51,6 +99,104 @@ where the first qubit is the control, the matrix representation is:
     0 & 0 & 1 & 0 
     \end{pmatrix}
 \end{equation}
-The CNOT gate is critical because it is the primary mechanism for creating entangled states. 
-For example, applying a Hadamard gate to the first qubit of the state $\ket{00}$ followed by a CNOT gate produces the Bell state 
-$\ket{\Phi^+} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$.
+
+The CNOT gate is really useful and will serves as the basic mechanism for entangling previously independent qubits.
+For example, if we start with the state $\ket{00}$, 
+then we apply a Hadamard gate to the first qubit to create a superposition state with equal probabilities, 
+and then apply a CNOT gate, 
+we generate the entangled Bell state $\ket{\Phi^+} = \frac{1}{\sqrt{2}}(\ket{00} + \ket{11})$ \cite{nielsen2010quantum}.
+
+%
+%
+Next really practical and usefull operation on two quibits is the SWAP gate. It exchanges the quantum states of two distinct qubits.
+%
+%
+
+This gate is usefull for routing information across physical hardware topologies, 
+as not all qubits are directly connected to each other. 
+Typically only the nearest ones are only connected so we have to change theirs positions.
+It also will act as the final bit reversal step of the Quantum Fourier Transform (QFT) used in Shor's algorithm:
+\begin{equation}
+    \text{SWAP} = \begin{pmatrix} 
+    1 & 0 & 0 & 0 \\ 
+    0 & 0 & 1 & 0 \\ 
+    0 & 1 & 0 & 0 \\ 
+    0 & 0 & 0 & 1 
+    \end{pmatrix}
+\end{equation}
+
+While the CNOT conditionally a flip a bit or leaves it unchanged, 
+the Controlled-Phase gate, denoted as $CP(\theta)$ or $CR_z(\theta)$ applies a conditional phase shift.
+%
+%
+This gate adds a complex phase of $e^{i\theta}$ to the system if, and only if, 
+both the control and target qubits are simultaneously in the $\ket{1}$ state:
+%
+%
+\begin{equation}
+    CP(\theta) = \begin{pmatrix} 
+    1 & 0 & 0 & 0 \\ 
+    0 & 1 & 0 & 0 \\ 
+    0 & 0 & 1 & 0 \\ 
+    0 & 0 & 0 & e^{i\theta} 
+    \end{pmatrix}
+\end{equation}
+
+This gate enables the precise extraction of periodic phases, which will necessary for tasks like integer factorization (Shor's algorithm).
+%
+%
+
+\subsection{Advanced and Multi-Controlled Gates}
+
+To create more complex logical structures, like the Search Oracles in Grover's algorithm or 
+the modular arithmetic in Shor's algorithm. We need gates that condition their behavior on several qubits at once.
+
+%
+%
+The Toffoli gate, also referred to as the Controlled-Controlled-NOT (CCNOT), is the most famous example of this.
+It works quite simple. It observes two control qubits and applies an $X$ gate to a single target qubit if, and only if, 
+both controls are in the $\ket{1}$ state.
+%
+%
+Because the Toffoli gate is proven to be universal for classical reversible computation, 
+it is the key gate for building quantum oracles that will evaluate classical boolean functions \cite{nielsen2010quantum}. 
+The CCNOT gate can be denoted as:
+%
+%
+\begin{equation}
+    \text{CCNOT} = \begin{pmatrix} 
+    1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+    0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 
+    \end{pmatrix}
+\end{equation}
+
+%
+%
+For more advanced quantum algorithms, the Toffoli gate is often generalized into the Multi-Controlled X gate ($MCX$).
+The $MCX$ gate flips a target qubit conditioned on the state of an arbitrary number of $n$ control qubits.
+
+%
+%
+Similarly, the diffusion step in Grover's algorithm relies heavily on a Multi-Controlled Z gate ($MCZ$), which is 
+instead of flipping the bit (applying the $X$ gate), the $MCZ$ gate flips the phase (the sign, by applying the $Z$ gate), 
+but only when all $n$ qubits in the same time are in the $\ket{1}$ state.
+
+%
+%
+In practice we may have not ready native $MCZ$ gate availbale to us, but we can easily synthesize one by taking an $MCX$ 
+gate and wrapping its target qubit in Hadamard gates.
+This trick smoothly shifts the bit flip operation into a phase flip operation: 
+$MCZ = (I \otimes \dots \otimes H) MCX (I \otimes \dots \otimes H)$ \cite{barenco1995elementary}.
+
+%
+%
+Many algorithms may also rely on the generalized Controlled-$U$ operation ($c-U$).
+Imagine an arbitrary quantum operation $U$ designed to act on a large target set of $n$ qubits.
+The $c-U$ gate check if a single control qubit is equal to $\ket{1}$, and if so, 
+it triggers the $U$ operation on the target qubits.

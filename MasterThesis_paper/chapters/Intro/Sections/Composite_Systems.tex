@@ -1,26 +1,52 @@
 \section{Composite Systems and Tensor Products}
-While a single qubit provides the fundamental basis for quantum information, 
-the true power of quantum computation emerges only when multiple qubits are combined. 
 
-To describe the state space of a multi-partite quantum system, we utilize the \textit{tensor product} (or Kronecker product), 
-denoted by $\otimes$.
+While a single qubit provides the baisc building block to use in quantum computing, full capabilities are achieved when 
+multiple qubits are used and allowed to interact.
+%
+%
+To describe the state of many quibits, we use the \textit{tensor product} (also knownas the Kronecker product), 
+denoted by the symbol $\otimes$ \cite{nielsen2010quantum}.
+%
+%
+If we have a system $A$ in a Hilbert space $\mathcal{H}_A$ of dimension $N$, 
+and a second system $B$ in Hilbert space $\mathcal{H}_B$ of dimension $M$, 
+then their composed system $AB$ is in the tensor product space $\mathcal{H}_A \otimes \mathcal{H}_B$.
+%
+%
+The total dimension of this combined space is $N \times M$, rather than $N + M$ typically seen composing to spaces.
+%
+%
+For example having two separate qubits, where both are in $\mathbb{C}^2$, 
+the composite two qubit state is in a four dimensional complex vector space, 
+$\mathbb{C}^2 \otimes \mathbb{C}^2 \cong \mathbb{C}^4$.
+%
+%
 
-If system $A$ is described by a Hilbert space $\mathcal{H}_A$ of dimension $N$, 
-and system $B$ is described by a Hilbert space $\mathcal{H}_B$ of dimension $M$, 
-the composite system $AB$ resides in the tensor product space $\mathcal{H}_A \otimes \mathcal{H}_B$, which has dimension $N \times M$. 
-
-For two qubits, each residing in $\mathbb{C}^2$, 
-the composite two-qubit state lives in $\mathbb{C}^2 \otimes \mathbb{C}^2 \cong \mathbb{C}^4$. 
-
-The computational basis for this composite system is formed by the tensor products of the individual basis states:
+The computational basis for this two qubit system is created by taking every possible pairs of the basis vectors:
 \begin{equation}
     \{\ket{0} \otimes \ket{0}, \ket{0} \otimes \ket{1}, \ket{1} \otimes \ket{0}, \ket{1} \otimes \ket{1}\}
 \end{equation}
-For brevity, we often omit the tensor product symbol and write these basis states as $\ket{00}, \ket{01}, \ket{10},$ and $\ket{11}$. 
-A general two-qubit state $\ket{\psi}$ is a superposition of these four basis states:
+%
+%
+We can simplify the notation of many qubit systems, as we usually skip the tensor product between the states and write them simply as 
+$\ket{00}, \ket{01}, \ket{10},$ and $\ket{11}$.
+%
+%
+The most general state of a two qubits, $\ket{\psi}$, is a superposition of all four of basis states:
 \begin{equation}
     \ket{\psi} = \alpha_{00}\ket{00} + \alpha_{01}\ket{01} + \alpha_{10}\ket{10} + \alpha_{11}\ket{11}
 \end{equation}
-where $\sum_{i,j \in \{0,1\}} |\alpha_{ij}|^2 = 1$. 
+Same as with the single qubit, the system with many qubits must hold the sum of the squared probability amplitudes equal to 100\%: 
+$\sum_{i,j \in \{0,1\}} |\alpha_{ij}|^2 = 1$.
+%
+%
 
-This exponential scaling of the state space dimension ($2^n$ for $n$ qubits) is a primary source of the proposed quantum computational advantage.
+This clearly shows the interesting property of many qubit system. Adding just a single qubit to a register 
+doubles the total number of amplitudes required to fully track the system's state.
+%
+%
+For a register of $n$ qubits, the state space consist of $2^n$ complex dimensions.
+%
+%
+This exponential growth shows the possible parallelism of quantum algorithms, 
+representing a possible source of their "theoretical" computational advantage over classical algorithms \cite{arora2009computational}.

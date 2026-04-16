@@ -1,55 +1,115 @@
 \section{The Qubit}
-The fundamental unit of quantum information is the \textit{qubit}. 
 
-While a classical bit is physically realized by a system with two distinct stable states (e.g., high/low voltage), 
+The fundamental unit of quantum information is the \textit{qubit} (quantum bit) \cite{nielsen2010quantum}.
+%
+%
+While a bit is a logical abstraction realized physically by a system with two distinct stable states (such as a high or low electrical voltage), 
 a qubit is a two-level quantum mechanical system.
-
+%
+%
+Physical realizations of a qubit may include the spin configuration of a single electron or the polarization state of a photon.
+%
+%
 \subsection{Computational Basis}
-The mathematical representation of a single qubit is a vector in the two-dimensional Hilbert space $\mathbb{C}^2$. 
 
-We define an orthonormal basis $\{\ket{0}, \ket{1}\}$, known as the \textit{computational basis}, 
-corresponding to the classical bit values 0 and 1:
+The state of a single qubit is represented by a unit vector from two dimensional complex Hilbert space, $\mathbb{C}^2$.
+%
+%
+We define an orthonormal basis $\{\ket{0}, \ket{1}\}$, which is our \textit{computational basis}.
+These vectors correspond directly to the deterministic logical states $0$ and $1$:
 \begin{equation}
     \ket{0} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \quad \ket{1} = \begin{pmatrix} 0 \\ 1 \end{pmatrix}
 \end{equation}
-
+%
+%
 \subsection{Superposition}
-Unlike a classical bit, a qubit can exist in a linear combination of basis states, 
-a phenomenon known as \textit{superposition}. A general qubit state $\ket{\psi}$ is described by:
+
+Unlike the bit, which must be in one state or the other, a qubit can exist in a linear combination of its basis states.
+%
+%
+This property is known as \textit{superposition}. It allows quantum algorithms to process many informations simultaneously.
+A generalized qubit state $\ket{\psi}$ is described by the equation:
 \begin{equation}
     \ket{\psi} = \alpha\ket{0} + \beta\ket{1}
 \end{equation}
-where $\alpha, \beta \in \mathbb{C}$ are complex probability amplitudes. 
-The Born rule dictates that upon measurement in the computational basis, 
-the probability of observing outcome $\ket{0}$ is $P(0) = |\alpha|^2$, and the probability of observing $\ket{1}$ is $P(1) = |\beta|^2$. 
-The normalization condition requires:
+where $\alpha$, $\beta$ are complex numbers known as \textit{probability amplitudes}.
+%
+%
+
+According to the Born rule, if we measure a qubit, the superposition will collapse into one of the definite basis states ($\ket{0}$ or $\ket{1}$).
+%
+%
+The probability of the $\ket{0}$ is $P(0) = |\alpha|^2$, and the probability of $\ket{1}$ is $P(1) = |\beta|^2$, which in total gives us
+that it must sum to exactly 100\%.
+%
+%
+This forces the state to be bound by the normalization condition:
 \begin{equation}
     |\alpha|^2 + |\beta|^2 = 1
 \end{equation}
-
+%
+%
 \subsection{The Bloch Sphere}
-To visualize a single qubit, we can simplify the parameters. 
-Since the global phase of a quantum state (a factor of $e^{i\gamma}$) has no observable physical consequence, 
-we can rewrite the state $\ket{\psi}$ effectively using only two real degrees of freedom, $\theta$ and $\phi$:
+
+As $\alpha$ and $\beta$ are complex numbers, a qubit state in thoery have four real parameters, but now using 
+the normalization condition we can write a single qubit using only three real parameters:
+%
+%
+\begin{equation}
+    \ket{\psi} = \cos(\frac{\theta}{2})e^{i\gamma_\alpha}\ket{0} + \sin(\frac{\theta}{2})e^{i\gamma_\beta}\ket{1}
+\end{equation}
+%
+%
+
+We can cut it just to two parameters using the global phase. We will factor out the phase of the first term, $e^{i\gamma_\alpha}$ 
+from the expression:
+\begin{equation}
+    \ket{\psi} = e^{i\gamma_\alpha} \left( \cos\left(\frac{\theta}{2}\right)\ket{0} + e^{i(\gamma_\beta - \gamma_\alpha)}\sin\left(\frac{\theta}{2}\right)\ket{1} \right)
+\end{equation}
+The term $e^{i\gamma_\alpha}$ before the parentheses is known as the global phase factor of the quantum state.
+%
+%
+
+As we calculate the probability of measurement, the global phase is multiplied by its conjugate:
+%
+%
+\begin{equation}
+    |e^{i\gamma \alpha}|^2 = e^{i\gamma \alpha} \cdot e^{-i\gamma \alpha} = e^0 = 1
+\end{equation}
+%
+%
+Because of this, we can define $\phi$, as $\phi = \gamma_\beta - \gamma_\alpha$ and simplify the parameterization of qubit state 
+using only two real angles, $\theta$ and $\phi$:
+%
+%
 \begin{equation}
     \ket{\psi} = \cos\left(\frac{\theta}{2}\right)\ket{0} + e^{i\phi}\sin\left(\frac{\theta}{2}\right)\ket{1}
 \end{equation}
-Here, $0 \leq \theta \leq \pi$ and $0 \leq \phi < 2\pi$.
+%
+%
 
-This parameterization maps every pure qubit state to a unique point on the surface of a unit sphere in $\mathbb{R}^3$, 
-known as the \textbf{Bloch Sphere}.
+The polar angle $0 \leq \theta \leq \pi$ is responsible for probability distribution of $\ket{0}$ and $\ket{1}$ outcomes.
+The azimuthal angle $0 \leq \phi < 2\pi$ defines the \textit{relative phase} between the two states and will be really useful 
+factor in quantum algorithms (e.g. Grover's algorithm).
+%
+%
+Now we can map every qubit state to a point on the surface of a unit sphere, known also as the \textbf{Bloch Sphere} \cite{nielsen2010quantum}.
 \begin{itemize}
     \item The North Pole ($\theta = 0$) represents the state $\ket{0}$.
     \item The South Pole ($\theta = \pi$) represents the state $\ket{1}$.
-    \item Points on the equator (e.g., $\theta = \pi/2, \phi = 0$) represent equal superpositions such as 
-    $\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$.
+    \item Points lying perfectly on the equator (e.g., $\theta = \pi/2, \phi = 0$) represent equal superpositions.
+    Where, the qubit has a 50\% chance of collapsing into either basis state upon measurement.
 \end{itemize}
-While the Bloch sphere provides an excellent intuition for single-qubit gates (which correspond to rotations on the sphere), 
-it does not generalize to multi-qubit systems due to entanglement.
+%
+%
 
+Bloch sphere provides an visual intuition for single qubit operations, as they are just rotations on the sphere, however 
+it fails to generalize to systems with many qubits due to non-local nature of quantum entanglement.
+%
+%
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.5\textwidth]{Bloch_sphere.jpg}
-    \caption{Bloch sphere: Source:\textit{Wikipedia}.}
+    \caption{Example Bloch sphere. Source: Wikipedia.}
     \label{fig:Bloch_sphere}
 \end{figure}

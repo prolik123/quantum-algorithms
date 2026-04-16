@@ -1,68 +1,180 @@
 \section{Theoretical Machine and Memory Models}
-Before analyzing the computational complexity of quantum algorithms, 
-we must rigorously define the theoretical machines capable of executing them. 
-While quantum circuits provide a practical and widely used model for algorithm design, 
-formal complexity theory relies heavily on the Quantum Turing Machine (QTM) and specialized memory architectures 
-to properly define resource scaling and asymptotic behavior. 
-This formalization is crucial for extending the classical extended Church-Turing thesis into the quantum regime \cite{bernstein1997}.
 
+Before we can start to analyze how fast or efficient are quantum algorithms, 
+we first need to define the theoretical models (computing model) it could runs on. 
+
+%
+%
+The quantum circuit computing model is great for visualizing and designing algorithms, it is more intuitive and 
+easier to write in a readable for, but formal computer science uses the abstract Quantum Turing Machine (QTM). 
+Proving that these two computing models are equivalent in terms of the computing capabilities is what allows us to 
+use quantum circuits to solve problems \cite{bernstein1997}.
+
+%
+%
 \subsection{The Quantum Turing Machine (QTM)}
 
-The Quantum Turing Machine, initially conceptualized in the early 1980s, formalized by Deutsch \cite{deutsch1985}, 
-and rigorously analyzed for complexity by Bernstein and Vazirani \cite{bernstein1997}, 
-serves as the quantum analogue of the classical probabilistic Turing machine. 
+%
+%
+The Quantum Turing Machine (QTM) is the basic theoretical model for quantum computation. 
+It was initially designed by Benioff and Feynman in the early 1980s and formalized by Deutsch in 1985 \cite{deutsch1985}, 
+and later put into formal computational complexity classes by Bernstein and Vazirani \cite{bernstein1997}. 
 
-Formally, a QTM is defined by a 7-tuple $M = (Q, \Sigma, \Gamma, \delta, q_0, q_{accept}, q_{reject})$, where:
+Similarly to classic Turing machine (TM), a QTM is defined by a 7-tuple:
+\begin{equation}
+    M = (Q, \Sigma, \Gamma, \delta, q_0, q_{accept}, q_{reject})
+\end{equation}
 \begin{itemize}
-    \item $Q$ is a finite set of internal states.
-    \item $\Sigma$ is the input alphabet.
-    \item $\Gamma$ is the tape alphabet (where $\Sigma \subset \Gamma$ and includes a blank symbol).
-    \item $q_0, q_{accept}, q_{reject} \in Q$ are the initial, accepting, and rejecting states, respectively.
+    \item $Q$ is the finite set of internal machine states.
+    \item $\Sigma$ is the initial input alphabet.
+    \item $\Gamma$ is the tape alphabet, which includes $\Sigma$ and a blank symbol.
+    \item $q_0, q_{accept}, q_{reject} \in Q$ are the start, accept, and reject states.
 \end{itemize}
 
-The core distinction lies in the transition function $\delta$. Instead of a deterministic or probabilistic mapping, 
-$\delta$ defines a transition amplitude:
+The difference between a TM and QTM in the transition function $\delta$. 
+Instead of moving us to a single new state, a QTM transitions into a quantum superposition of states. 
+To be more precise $\delta$ assigns a complex amplitude to every possible move:
+%
+%
 \begin{equation}
     \delta: Q \times \Gamma \times Q \times \Gamma \times \{L, R\} \to \mathbb{C}
 \end{equation}
-For a QTM to be physically valid, its global time evolution must be governed by a unitary operator $U$. 
-Unlike classical machines where any local probabilistic transitions guarantee a valid global evolution, 
-a QTM's local transition amplitudes must satisfy strict well-formedness conditions to ensure global unitarity 
-(e.g., local preservation of the norm and orthogonality of configurations shifting in opposite directions) \cite{bernstein1997}. 
+%
+%
 
-The state of the QTM is represented by a vector in the Hilbert space 
-$\mathcal{H} = \mathcal{H}_{tape} \otimes \mathcal{H}_{head} \otimes \mathcal{H}_{state}$. 
-If the machine is in a superposition of configurations, 
-the probability of observing a specific configuration upon measurement is the absolute square of its complex amplitude. 
-The restriction that $U^\dagger U = I$ enforces that the computation is strictly reversible and that probability is conserved globally. 
-By demonstrating that a universal QTM can simulate any other QTM with only polynomial overhead, 
-the theoretical foundation for the BQP complexity class was firmly established.
+For a QTM to represent a real physical system, its path of computation in time must be completely reversible. 
+This means the transition operator $U$ must be unitary ($U^\dagger U = I$). 
+Unlike in classic machines, a QTM's amplitudes must follow strict rules to ensure that the global probability 
+always sums exactly to 100\% \cite{bernstein1997}. 
+%
+%
 
-% 
+If we pause or stop a running QTM at any moment, it is not just in one specific tape configuration. 
+It exists in a big, entangled superposition of the tape contents, head position, and its internal state. 
+When we at the end measures the state of the machine, the probability of seeing any specific setup 
+is given by the Born rule. 
+%
+%
+
+Also by proving that a single "Universal" QTM (similar to normal TM) can simulate any other QTM, 
+researchers created the groundwork for defining what quantum computers can solve in practice.
+
+%
+%
+\subsection{Equivalence of QTMs and Quantum Circuits}
+%
+%
+
+While the QTM is an ideal framework for formal proofs, it is hard to use for algorithm design. 
+Due to that, almost all quantum algorithms are written using the much more intuitive quantum circuit model. 
+The reason we can switch between these two models without loosing any formality it is because 
+of a theorem by Andrew Yao in 1993 \cite{yao1993}.
+%
+%
+
+\textbf{Theorem (Yao's Equivalence):} 
+Any computation that successfully halts in time $T(n)$ on a Quantum Turing Machine can be simulated by 
+a quantum circuit using at most $\mathcal{O}(T(n)^2)$ gates. 
+%
+%
+Also in the other direction, any quantum circuit with $S(n)$ gates can be simulated by a 
+QTM in a time bounded by a polynomial of $S(n)$.
+%
+%
+
+
+\textit{Simulating a QTM with a Circuit (Proof outline):}
+Let's take a QTM that runs for $T(n)$ steps. 
+In that time, its tape head can only move at most $T(n)$ cells away from the start. 
+%
+%
+Because the space is bounded from above, 
+we can constructe a quantum circuit where each qubit represents a specific cell on that tape. 
+%
+%
+Since the QTM reads exactly one cell at a time, a single step of the machine translates to a small layer 
+of quantum logic gates. 
+%
+%
+
+To simulate the run from the beggining to the end, we will just connect $T(n)$ of these gate layers together. 
+%
+%
+To handle the fact that the tape head might be in a superposition of different locations, 
+we use controlled-SWAP gates to route information. 
+%
+%
+This ensures the final circuit size only grows to about $\mathcal{O}(T(n)^2)$.
+
+\textit{Simulating a Circuit with a QTM (Proof outline):}
+%
+%
+
+Going in the other way, a Universal QTM can act as a circuit interpreter. 
+%
+%
+
+First, the machine computes the blueprint of the required circuit. 
+The QTM then uses its tape to hold the logical states of the circuit's qubits. 
+%
+%
+
+It reads the generated blueprint one gate at a time. 
+To apply a gate, the QTM moves its head to the correct "qubit" cells and applies the unitary matrix. 
+Moving the head back and forth to connect non-adjacent qubits takes some time, but this time only scales polynomially. 
+Because of this, the simulation is efficient. $\blacksquare$
+%
+%
 
 \subsection{Quantum Random Access Memory (QRAM)}
+%
+%
 
-While the QTM encapsulates general computation, 
-certain quantum algorithms—such as the HHL algorithm for linear systems \cite{harrow2009} or 
-various quantum machine learning protocols—assume the ability to query classical data in a quantum superposition. 
-This necessitates a Quantum Random Access Memory (QRAM) \cite{giovannetti2008}.
+A thing worth to mention is Quantum Random Access Memory (QRAM). 
+While the QTM and circuit models cover standard operations, some new algorithms need something more. 
+%
+%
 
-A QRAM allows a quantum computer to access memory cells using a quantum superposition of addresses. 
-Given an address register $A$ and a data register $D$, the QRAM operation applies the unitary transformation:
+Algorithms like HHL for solving big linear equations \cite{harrow2009} and quantum machine learning 
+need to process big amounts of classical data. 
+%
+%
+
+To load this data without destroying their quantum speedups, 
+they rely on a specialized theoretical hardware called QRAM \cite{giovannetti2008}.
+%
+%
+
+Classic RAM lets a computer get one specific piece (sequential pack) of data from a 
+single memory address (and some of it's sourroundings). 
+%
+%
+
+QRAM allows a quantum computer to query a superposition of addresses in the same time. 
+Given an address register $A$ and a targeted data register $D$, an ideal QRAM performs the following elegant operation:
 \begin{equation}
-    \sum_{i=0}^{N-1} \alpha_i |i\rangle_A |0\rangle_D \xrightarrow{\text{QRAM}} \sum_{i=0}^{N-1} \alpha_i |i\rangle_A |x_i\rangle_D
+    \sum_{i=0}^{N-1} \alpha_i \ket{i}_A \ket{0}_D \xrightarrow{\text{QRAM}} \sum_{i=0}^{N-1} \alpha_i \ket{i}_A \ket{x_i}_D
 \end{equation}
-where $x_i$ is the classical data stored at the $i$-th classical memory location.
+where, $x_i$ encodes the classical data stored in the $i$-th memory slot.
+%
+%
 
-A naive realization of QRAM would require a "fan-out" architecture, entangling the address register with all $N$ memory cells simultaneously. This leads to massive decoherence because $\mathcal{O}(N)$ quantum gates are actively interacting with the environment during every query. 
+[Not fully feeling that, include it all here or skip it? (I mean the below)]
 
-To resolve this, Giovannetti et al. \cite{giovannetti2008} proposed the \textit{bucket-brigade architecture}. 
-In this model, the memory is structured as a binary routing tree. 
-To access a memory cell, the address qubits are sequentially injected into the root of the tree, 
-dictating the routing path by altering the states of the intermediate nodes (often modeled as qutrits) 
-from a passive "wait" state to active routing states. 
-The crucial advantage is that only the nodes along the specific paths in the superposition are actively queried, 
-while the rest of the tree remains passive. 
-Consequently, accessing an array of $N$ elements requires only $\mathcal{O}(\log N)$ active quantum switches per query. 
-This exponentially suppresses the decoherence rate compared to the fan-out architecture, 
-making the theoretical model of QRAM physically plausible for fault-tolerant quantum computation.
+The engineering challenge behind building a QRAM is really big. 
+A simple design would wire the address register directly to all $N$ memory cells at once. 
+In the quantum world, this approach will be a disaster. 
+Forcing the address qubits to interact with millions of logic gates in the same time opens the door to noise from the environment, 
+causing the superposition to collapse instantly, which is known as decoherence.
+
+To solve this problem, Giovannetti et al. proposed a better way: the \textit{bucket-brigade architecture} \cite{giovannetti2008}. 
+Instead of a massive connection, the memory is organized into a binary routing tree.
+
+When a quantum address goes into the root of the tree, it acts like a train that flips the switches along its specific path. 
+It shifts the required nodes from a disconnected "wait" state into an active state. 
+The most important thing in this design is isolation. 
+Only the specific nodes on the active path are "woken up" by the system. 
+The rest of the tree remains asleep and completely isolated from environmental noise. 
+
+Because of this, accessing an array of $N$ items only activates $\mathcal{O}(\log N)$ quantum switches per query, rather than $N$. 
+This architecture reduces the decoherence, making big data queries possible for future hardware.
