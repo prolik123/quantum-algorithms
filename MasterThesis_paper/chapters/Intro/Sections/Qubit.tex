@@ -17,9 +17,11 @@ The state of a single qubit is represented by a unit vector from two dimensional
 %
 We define an orthonormal basis $\{\ket{0}, \ket{1}\}$, which is our \textit{computational basis}.
 These vectors correspond directly to the deterministic logical states $0$ and $1$:
+\bigskip
 \begin{equation}
     \ket{0} = \begin{pmatrix} 1 \\ 0 \end{pmatrix}, \quad \ket{1} = \begin{pmatrix} 0 \\ 1 \end{pmatrix}
 \end{equation}
+\bigskip
 %
 %
 \subsection{Superposition}
@@ -29,9 +31,11 @@ Unlike the bit, which must be in one state or the other, a qubit can exist in a 
 %
 This property is known as \textit{superposition}. It allows quantum algorithms to process many informations simultaneously.
 A generalized qubit state $\ket{\psi}$ is described by the equation:
+\bigskip
 \begin{equation}
     \ket{\psi} = \alpha\ket{0} + \beta\ket{1}
 \end{equation}
+\bigskip
 where $\alpha$, $\beta$ are complex numbers known as \textit{probability amplitudes}.
 %
 %
@@ -44,9 +48,11 @@ that it must sum to exactly 100\%.
 %
 %
 This forces the state to be bound by the normalization condition:
+\bigskip
 \begin{equation}
     |\alpha|^2 + |\beta|^2 = 1
 \end{equation}
+\bigskip
 %
 %
 \subsection{The Bloch Sphere}
@@ -55,17 +61,21 @@ As $\alpha$ and $\beta$ are complex numbers, a qubit state in thoery have four r
 the normalization condition we can write a single qubit using only three real parameters:
 %
 %
+\bigskip
 \begin{equation}
     \ket{\psi} = \cos(\frac{\theta}{2})e^{i\gamma_\alpha}\ket{0} + \sin(\frac{\theta}{2})e^{i\gamma_\beta}\ket{1}
 \end{equation}
+\bigskip
 %
 %
 
 We can cut it just to two parameters using the global phase. We will factor out the phase of the first term, $e^{i\gamma_\alpha}$ 
 from the expression:
+\bigskip
 \begin{equation}
     \ket{\psi} = e^{i\gamma_\alpha} \left( \cos\left(\frac{\theta}{2}\right)\ket{0} + e^{i(\gamma_\beta - \gamma_\alpha)}\sin\left(\frac{\theta}{2}\right)\ket{1} \right)
 \end{equation}
+\bigskip
 The term $e^{i\gamma_\alpha}$ before the parentheses is known as the global phase factor of the quantum state.
 %
 %
@@ -73,18 +83,22 @@ The term $e^{i\gamma_\alpha}$ before the parentheses is known as the global phas
 As we calculate the probability of measurement, the global phase is multiplied by its conjugate:
 %
 %
+\bigskip
 \begin{equation}
     |e^{i\gamma \alpha}|^2 = e^{i\gamma \alpha} \cdot e^{-i\gamma \alpha} = e^0 = 1
 \end{equation}
+\bigskip
 %
 %
 Because of this, we can define $\phi$, as $\phi = \gamma_\beta - \gamma_\alpha$ and simplify the parameterization of qubit state 
 using only two real angles, $\theta$ and $\phi$:
 %
 %
+\bigskip
 \begin{equation}
     \ket{\psi} = \cos\left(\frac{\theta}{2}\right)\ket{0} + e^{i\phi}\sin\left(\frac{\theta}{2}\right)\ket{1}
 \end{equation}
+\bigskip
 %
 %
 

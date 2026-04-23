@@ -21,9 +21,11 @@ It was initially designed by Benioff and Feynman in the early 1980s and formaliz
 and later put into formal computational complexity classes by Bernstein and Vazirani \cite{bernstein1997}. 
 
 Similarly to classic Turing machine (TM), a QTM is defined by a 7-tuple:
+\bigskip
 \begin{equation}
     M = (Q, \Sigma, \Gamma, \delta, q_0, q_{accept}, q_{reject})
 \end{equation}
+\bigskip
 \begin{itemize}
     \item $Q$ is the finite set of internal machine states.
     \item $\Sigma$ is the initial input alphabet.
@@ -36,9 +38,11 @@ Instead of moving us to a single new state, a QTM transitions into a quantum sup
 To be more precise $\delta$ assigns a complex amplitude to every possible move:
 %
 %
+\bigskip
 \begin{equation}
     \delta: Q \times \Gamma \times Q \times \Gamma \times \{L, R\} \to \mathbb{C}
 \end{equation}
+\bigskip
 %
 %
 
@@ -83,7 +87,7 @@ QTM in a time bounded by a polynomial of $S(n)$.
 %
 
 
-\textit{Simulating a QTM with a Circuit (Proof outline):}
+\textbf{Simulating a QTM with a Circuit (Proof outline):}
 Let's take a QTM that runs for $T(n)$ steps. 
 In that time, its tape head can only move at most $T(n)$ cells away from the start. 
 %
@@ -106,7 +110,7 @@ we use controlled-SWAP gates to route information.
 %
 This ensures the final circuit size only grows to about $\mathcal{O}(T(n)^2)$.
 
-\textit{Simulating a Circuit with a QTM (Proof outline):}
+\textbf{Simulating a Circuit with a QTM (Proof outline):}
 %
 %
 

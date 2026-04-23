@@ -1,7 +1,9 @@
 from qiskit_aer import Aer
 
 from qiskit.circuit.library import PhaseOracleGate
-from src.algorithms.grover import GroverAlgorithmOptimized, GroverAlgorithmManual
+
+from src.algorithms.grover.grover_manual import GroverAlgorithmManual
+from src.algorithms.grover.grover_optimized import GroverAlgorithmOptimized
 
 if __name__ == "__main__":
 
