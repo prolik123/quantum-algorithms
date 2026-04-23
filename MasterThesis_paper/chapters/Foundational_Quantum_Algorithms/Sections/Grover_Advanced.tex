@@ -1,0 +1,343 @@
+\section{Advanced Variants of Grover's Algorithm}
+\label{sec:advanced_grover}
+%
+%
+
+As mentioned in the previous section, the standard Grover's algorithm is  optimal for general unstructured search, but it has a problem in it. 
+It's success probability is not exactly 100\%, as also, what will be a bigger issue, it has the overshooting effect. 
+To address these issues several other variants of the Grover's algorithm have been developed.
+%
+%
+
+\subsection{Exact Quantum Search}
+%
+%
+
+\subsubsection{Idea of Exact Quantum Search}
+
+In the standard version of Grover's algorithm we perform $k \approx \frac{\pi}{4}\sqrt{\frac{N}{M}}$ iterations, where $M$ is the number of solutions. 
+Let's further denote $\sqrt{\frac{N}{M}}$ as $Q$
+As we know $k$ must be an integer which mean it already an apporximation so we may not align perfectly with the correct angle. 
+Also due to the formula using small angle approximation, the number of iterations may differ even more from the target state vector $\ket{x^*}$. 
+The final success probability $P_k = \sin^2((2k+1)\theta)$ is typically 
+quite close to $1$, but sometimes that may result in an issue.
+%
+%
+
+\bigskip
+The \textit{Exact Quantum Search} variant, first proposed by Long \cite{long2001grover}, modifies the algorithm 
+to guarantee correct answer (excluding the errors from floating point arithmetic). 
+In short, it peforms the standard Grover iterations until the state vector is within a single step of the target, 
+then using one step it will try to align with the target angle perfectly.
+%
+%
+
+\bigskip
+In the standard algorithm, every iteration rotates the state vector by an angle of $2\theta$. 
+After $k$ full iterations, the total angle relative to the starting uniform superposition is $(2k+1)\theta$.
+As described earlier, to perform a correct measurement, that angle should equal to $\frac{\pi}{2}$. 
+So to solve the problem with $k$ being a whole number, we should at the end rotate the vector by $\delta$, which is defined as $\delta = \frac{\pi}{2} - (2k+1)\theta$.
+%
+%
+
+\bigskip
+To also ensure that this computation is fully accurate, we must stop relying on the small angle approximation (which was $\theta \approx \frac{1}{Q}$). 
+Instead we will calculate the initial angle using a formula:
+\bigskip
+\begin{equation}
+    \theta = \arcsin (\frac{1}{Q})
+\end{equation}
+\bigskip
+Due to that the gap $\delta$ is known precisely.
+%
+%
+
+\bigskip
+The inital angle formula comes from the definition of the uniform superposition. 
+At the start of the algorithm, the probability amplitude of finding the target state is exactly $\frac{1}{Q}$ 
+(comes right from the distribution after using the Hadamard gate). 
+%
+%
+In the geometric representation, this initial amplitude corresponds to the sine of the starting angle $\theta$, 
+which gives us the exact equation $\sin(\theta) = \frac{1}{Q}$. 
+By applying the inverse sine function, we can extract the precise angle.
+%
+%
+
+\bigskip
+Using that two improvements we can in theory achieve the deterministic result of the search algorithm.
+
+\subsubsection{Implementation of Exact Quantum Search}
+
+To implement this variant we must implement custom parameterized diffusion operator to apply specific fractional phase shifts, which in that case will be the exact 
+remaining angle.
+
+\bigskip
+The code below shows the implementation of the Exact Quantum Search. 
+The algorithm performs standard iterations first. Then it calculates the remaining angle and applies generated diffuser for the final fractional step.
+%
+%
+
+%After changes it may not be needed
+\newpage
+
+\begin{lstlisting}[
+    language=Python, 
+    title={Implementation of the Exact Quantum Search algorithm.}, 
+    label={lst:exact_impl},              
+    basicstyle=\ttfamily\small,    
+    backgroundcolor=\color{gray!5},
+    frame=single, 
+    rulecolor=\color{gray!40},     
+    framesep=5pt,                 
+    numbers=left, 
+    numberstyle=\tiny\color{gray}, 
+    numbersep=10pt,                
+    commentstyle=\color{green!50!black}\itshape, 
+    keywordstyle=\color{blue}\bfseries, 
+    stringstyle=\color{red!80!black},
+    showstringspaces=false,
+    breaklines=true,
+    aboveskip=1.5em,              
+    belowskip=1.5em                
+]
+class GroverAlgorithmExact(GroverAlgorithmBase):
+    def __init__(self, oracle):
+        super().__init__(oracle)
+        self.standard_diffuser = self._build_diffuser(np.pi)
+
+    def _build_diffuser(self, angle: float):
+        qc = QuantumCircuit(self.num_qubits, name=f"U_s")
+        qc.h(range(self.num_qubits))
+        qc.x(range(self.num_qubits))
+
+        if self.num_qubits > 1:
+            mcphase = MCPhaseGate(angle, self.num_qubits - 1)
+            qc.append(mcphase, range(self.num_qubits))
+        else:
+            qc.p(angle, 0)
+
+        qc.x(range(self.num_qubits))
+        qc.h(range(self.num_qubits))
+        return qc
+
+    def build_circuit(self, num_solutions: int = None):
+        if number_of_solutions is None or number_of_solutions < 1:
+            raise ValueError("Invalid number of solutions.")
+
+        n_states = 2 ** self.num_qubits
+        theta = 2 * np.arcsin(np.sqrt(num_solutions / n_states))
+        exact_iters_float = (np.pi / (2 * theta)) - 0.5
+        iterations = max(0, math.floor(exact_iters_float))
+
+        qc = QuantumCircuit(self.num_qubits, self.num_qubits)
+        qc.h(range(self.num_qubits))
+
+        for _ in range(iterations):
+            qc.compose(self.oracle, inplace=True)
+            qc.compose(self.standard_diffuser, inplace=True)
+
+        # Perform the final fractional iteration
+        remaining_angle = np.pi/2 - (iterations + 0.5) * theta
+        if remaining_angle > 1e-5:
+            final_phase = 2 * remaining_angle 
+            final_diffuser = self._build_diffuser(final_phase)
+            qc.compose(self.oracle, inplace=True)
+            qc.compose(final_diffuser, inplace=True)
+
+        qc.measure(range(self.num_qubits), range(self.num_qubits))
+        return qc
+\end{lstlisting}
+%
+%
+
+\subsection{Fixed-Point Quantum Search}
+%
+%
+\subsubsection{Idea of Fixed-Point Quantum Search}
+
+A significant problem of the standard algorithm is its periodic. 
+If the number of target solutions $M$ is unknown, it is impossible (or at least hard) to compute the optimal number of iterations $k$ to perform. 
+Performing too may iterations in the algorithm causes the state vector to rotate past the $\ket{x^*}$ axis, which results in
+decreasing the success probability (Overshooting effect).
+%
+%
+
+\bigskip
+The \textit{Fixed-Point Quantum Search} addresses this by changing the geometry of the operations. 
+Introduced by Yoder, Low, and Chuang \cite{yoder2014fixed}, this variant replaces the standard $\pi$ ($180^\circ$) 
+phase shifts in both the phase oracle ($U_f$) and the diffusion operator ($U_s$) with a phase shift of $\pi/3$ ($60^\circ$).
+%
+%
+
+
+\subsubsection{Proof of Convergence}
+%
+%
+
+To prove that replacing the standard phase shifts to $\pi/3$ will not be periodic but convergent, we must analyze failure probability amplitude and prove that it is 
+strictly decreasing. 
+Let the initial uniform superposition state be defined as $\ket{s} = \sin\gamma\ket{x^*} + \cos\gamma\ket{s'}$, 
+where $\ket{s'}$ is the uniform superposition of all states different than a target one and $\gamma$ is the initial angle.
+%
+%
+
+\bigskip
+As said before in this variant we will use phase shift of $\omega = e^{i\pi/3}$. It follows that the modified oracle $U_f(\pi/3)$ and diffuser $U_s(\pi/3)$ operators 
+can be denoted as:
+\bigskip
+\begin{equation}
+    U_f = I - (1 - \omega)\ket{x^*}\bra{x^*}
+\end{equation}
+\bigskip
+\begin{equation}
+    U_s = I - (1 - \omega)\ket{s}\bra{s}
+\end{equation}
+%
+%
+\bigskip
+
+Applying the oracle to the initial state yields $U_f \ket{s} = \omega\sin\gamma\ket{x^*} + \cos\gamma\ket{s'}$. 
+Also applying a one full new iteration gives us the following state:
+\bigskip
+\begin{equation}
+    \mathcal{G}_{\pi/3} \ket{s} = U_s U_f \ket{s} = (I - (1 - \omega)\ket{s}\bra{s}) (U_f \ket{s}) = U_f \ket{s} - (1 - \omega)\ket{s} \bra{s} U_f \ket{s}
+\end{equation}
+%
+%
+\bigskip
+
+Let's observe the amplitude of the state different than the target one. 
+This amplitude will represent the error of our algorithm and can be denoted as $\bra{s'} U_s U_f \ket{s}$:
+\bigskip
+\begin{equation}
+    \bra{s'} U_s U_f \ket{s} = \bra{s'} U_f \ket{s} - (1 - \omega)\bra{s'} \ket{s} \bra{s} U_f \ket{s}
+\end{equation}
+%
+%
+\bigskip
+
+Using a few substitutions form the definition of $\ket{s}$ and $U_f \ket{s}$ we can evaluate a few terms: 
+\bigskip
+\begin{equation}
+    \bra{s'} \ket{s} = \sin \gamma \bra{s'}\ket{x^*} + \cos \gamma \bra{s'} \ket{s'} = \sin \gamma \cdot 0 +  \cos \gamma \cdot 1 = \cos \gamma
+\end{equation}
+\bigskip
+\begin{equation}
+    \bra{s'} U_f \ket{s} = \omega \sin \gamma \bra{s'} \ket{x^*} + \cos \gamma \bra{s'} \ket{s'} = \omega \sin \gamma \cdot 0 +  \cos \gamma \cdot 1 = \cos \gamma
+\end{equation}
+\bigskip
+\begin{equation}
+    \bra{s} U_f \ket{s} = (\sin\gamma\bra{x^*} + \cos\gamma\bra{s'})(\omega\sin\gamma\ket{x^*} + \cos\gamma\ket{s'}) = \omega\sin^2\gamma + \cos^2\gamma
+\end{equation}
+\bigskip
+
+Using all that we obtain that our total error can be represented as:
+\bigskip
+\begin{equation}
+    \bra{s'} U_s U_f \ket{s} = \cos\gamma - (1 - \omega)\cos\gamma (\omega\sin^2\gamma + \cos^2\gamma)
+\end{equation}
+%
+%
+\bigskip
+
+Factoring out $\cos\gamma$ simplifies the expression to:
+\bigskip
+\begin{equation}
+    \cos\gamma [ 1 - (\omega - \omega^2)\sin^2\gamma - (1 - \omega)\cos^2\gamma ]
+\end{equation}
+%
+%
+\bigskip
+
+We know that $\omega = e^{i\pi/3}$ is a root of the equation $\omega^2 - \omega + 1 = 0$, 
+which implies that $\omega - \omega^2 = 1$. Substituting this into the above equation gives us:
+\begin{equation}
+    \cos\gamma [ 1 - \sin^2\gamma - (1 - \omega)\cos^2\gamma ] = \cos\gamma [ \cos^2\gamma - (1 - \omega)\cos^2\gamma ] = \omega \cos^3\gamma
+\end{equation}
+\bigskip
+%
+%
+
+The value of amplitude for non target elements after one iteration equals to $\cos^3\gamma$. 
+As we know that the initial angle $\gamma > 0$ (as the at least one target element exists), we know that $\cos\gamma < 1$.
+%
+%
+
+\bigskip
+After $k$ iterations, the error amplitude can be bounded by $\cos^{2k+1}\gamma$, which now can be clearly seen approaches $0$ 
+as $k \to \infty$. That means that the probability of measuring the correct state approaches $1$ and the overshooting effect would not have place there.
+%
+%
+
+\subsubsection{Implementation of Fixed-Point Quantum Search}
+
+The implementation is quite similar to the oryginal Grover implementation. 
+The main difference here is to create oracle and diffuser $U_s(\pi/3)$, which will be applyed as in the classic Grover's algorithm. The problem here in the general 
+will be that $U_f(\pi/3)$ cannot be created without a knowledge about the black box and has to be given as an input. In practice Qiskit can handle that as it knows how that 
+oracle is constructed but it may not always be such easy case.
+%
+%
+
+% May not be needed later
+\newpage
+
+\begin{lstlisting}[
+    language=Python, 
+    title={Implementation of the Fixed-Point Quantum Search algorithm.}, 
+    label={lst:fixed_impl},              
+    basicstyle=\ttfamily\small,    
+    backgroundcolor=\color{gray!5},
+    frame=single, 
+    rulecolor=\color{gray!40},     
+    framesep=5pt,                 
+    numbers=left, 
+    numberstyle=\tiny\color{gray}, 
+    numbersep=10pt,                
+    commentstyle=\color{green!50!black}\itshape, 
+    keywordstyle=\color{blue}\bfseries, 
+    stringstyle=\color{red!80!black},
+    showstringspaces=false,
+    breaklines=true,
+    aboveskip=1.5em,              
+    belowskip=1.5em                
+]
+class GroverAlgorithmFixedPoint(GroverAlgorithmBase):
+    def __init__(self, oracle):
+        super().__init__(oracle)
+
+        self.diffuser_pi_3 = self._build_diffuser(np.pi / 3)
+        self.oracle_pi_3 = self.oracle.power(1/3)
+
+    def _build_diffuser(self, angle: float) -> QuantumCircuit:
+        qc = QuantumCircuit(self.num_qubits, name=f"U_s")
+        qc.h(range(self.num_qubits))
+        qc.x(range(self.num_qubits))
+
+        if self.num_qubits > 1:
+            mcphase = MCPhaseGate(angle, self.num_qubits - 1)
+            qc.append(mcphase, range(self.num_qubits))
+        else:
+            qc.p(angle, 0)
+
+        qc.x(range(self.num_qubits))
+        qc.h(range(self.num_qubits))
+        return qc
+
+    def build_circuit(self,  num_solutions: int = None):
+        opt_its = self._calculate_optimal_iterations(num_solutions)
+
+        # It will converge securely without overshooting
+        iterations = 2*(opt_its) + 17
+
+        qc = QuantumCircuit(self.num_qubits, self.num_qubits)
+        qc.h(range(self.num_qubits))
+
+        # Iterations converge securely without overshooting
+        for _ in range(iterations):
+            qc.compose(self.oracle_pi_3, inplace=True)
+            qc.compose(self.diffuser_pi_3, inplace=True)
+
+        qc.measure(range(self.num_qubits), range(self.num_qubits))
+        return qc
+\end{lstlisting}

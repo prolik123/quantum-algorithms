@@ -84,9 +84,11 @@ However, Bennett's theorem mathematically proves that any classical program can 
 Second, the classical BPP machine needs random coin flips to operate. 
 A quantum computer is arguably nature's perfect random number generator. 
 By taking a fresh qubit in the $\ket{0}$ state and hitting it with a Hadamard gate, we create a perfect 50/50 superposition:
+\bigskip
 \begin{equation}
     H\ket{0} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1})
 \end{equation}
+\bigskip
 Measuring this qubit yields a perfectly unbiased, fundamentally unpredictable random bit. 
 
 By feeding a steady stream of these quantum coin flips into our reversible classical circuit, the quantum computer flawlessly mimics the classical BPP machine. 
@@ -107,14 +109,18 @@ The answer is yes, using an intuitive method inspired by Richard Feynman's sum-o
 
 Imagine the execution of a quantum circuit as a massive branching tree of possibilities. 
 If a circuit is made of $m$ sequential gates $U_1, U_2, \dots, U_m$, the transition amplitude from a starting state $\ket{x}$ to a final state $\ket{y}$ is mathematically defined as:
+\bigskip
 \begin{equation}
     \bra{y} U_m U_{m-1} \dots U_1 \ket{x}
 \end{equation}
+\bigskip
 
 By breaking this down, we can view it as a sum over every possible intermediate state, $z$, at every step of the computation:
+\bigskip
 \begin{equation}
     \sum_{z_1, \dots, z_{m-1}} \bra{y} U_m \ket{z_{m-1}} \bra{z_{m-1}} U_{m-1} \ket{z_{m-2}} \dots \bra{z_1} U_1 \ket{x}
 \end{equation}
+\bigskip
 
 At every single gate operation, the universe of the simulation splits into different paths, each carrying a tiny piece of this complex probability amplitude. 
 Because a quantum register with $n$ qubits evaluating $m$ gates creates $2^{nm}$ possible branches, a classical computer would take practically forever to calculate this massive sum. 

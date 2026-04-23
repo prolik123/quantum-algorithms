@@ -8,5 +8,5 @@ if __name__ == "__main__":
     print(f"Solving: x^2 ≡ {A_VAL} (mod {MODULO})")
 
     print("Executing Quantum Search (Manual Diffuser)...")
-    results = solve_quadratic_congruence(A_VAL, MODULO, use_optimized=False)
+    results = solve_quadratic_congruence(A_VAL, MODULO, grover_version='manual')
     print("Results:", results)

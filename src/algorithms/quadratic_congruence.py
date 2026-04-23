@@ -1,7 +1,10 @@
 from qiskit.circuit.library import PhaseOracleGate
 from qiskit_aer import Aer
 
-from src.algorithms.grover import GroverAlgorithmManual, GroverAlgorithmOptimized
+from src.algorithms.grover.grover_exact import GroverAlgorithmExact
+from src.algorithms.grover.grover_fixed_point import GroverAlgorithmFixedPoint
+from src.algorithms.grover.grover_manual import GroverAlgorithmManual
+from src.algorithms.grover.grover_optimized import GroverAlgorithmOptimized
 
 
 class NoDiscreteRootsError(Exception):
@@ -13,7 +16,7 @@ class NoDiscreteRootsError(Exception):
 
 
 def solve_quadratic_congruence(a: int, m: int, num_qubits: int = None,
-                               shots: int = None, use_optimized: bool = False, simulator=None):
+                               shots: int = None, grover_version: str = 'optimized', simulator=None):
     """
     Solves the discrete root problem x^2 ≡ a (mod m) using Grover's algorithm and
     retrieves the results. The results are chosen probability is at least half of
@@ -23,14 +26,14 @@ def solve_quadratic_congruence(a: int, m: int, num_qubits: int = None,
     :param m: The modulo.
     :param num_qubits: Optional. Number of qubits. If None, computed automatically based on 'm'.
     :param shots: Optional. Number of simulation shots. If None, computed dynamically.
-    :param use_optimized: If True, uses Qiskit's built-in Grover operator.
+    :param grover_version: The version of Grover's algorithm to use: 'manual', 'optimized', 'exact', 'fixed_point'.
     :param simulator: Aer backend simulator.
     :return: A list of integer solutions that are the discrete roots.
     """
 
     try:
         results = solve_quadratic_congruence_and_get_probabilities(
-            a, m, num_qubits, shots, use_optimized, simulator
+            a, m, num_qubits, shots, grover_version, simulator
         )
     except NoDiscreteRootsError:
         return []
@@ -48,7 +51,7 @@ def solve_quadratic_congruence(a: int, m: int, num_qubits: int = None,
 
 
 def solve_quadratic_congruence_and_get_probabilities(a: int, m: int, num_qubits: int = None,
-        shots: int = None, use_optimized: bool = False, simulator = None) -> dict:
+        shots: int = None, grover_version: str = 'optimized', simulator = None) -> dict:
     """
     Solves the discrete root problem x^2 ≡ a (mod m) using Grover's algorithm.
 
@@ -56,7 +59,7 @@ def solve_quadratic_congruence_and_get_probabilities(a: int, m: int, num_qubits:
     :param m: The modulo.
     :param num_qubits: Optional. Number of qubits. If None, computed automatically based on 'm'.
     :param shots: Optional. Number of simulation shots. If None, computed dynamically.
-    :param use_optimized: If True, uses Qiskit's built-in Grover operator.
+    :param grover_version: The version of Grover's algorithm to use: 'manual', 'optimized', 'exact', 'fixed_point'.
     :param simulator: Aer backend simulator.
     :return: A dictionary mapping the decimal integer solutions to their measurement counts.
     """
@@ -76,14 +79,19 @@ def solve_quadratic_congruence_and_get_probabilities(a: int, m: int, num_qubits:
     logic_expr, num_solutions = _generate_congruence_logic_string(a, m, num_qubits)
     oracle = PhaseOracleGate(logic_expr)
 
-    grover = GroverAlgorithmOptimized(oracle) if use_optimized else GroverAlgorithmManual(oracle)
-
-    optimal_iters = grover.calculate_optimal_iterations(num_solutions)
+    if grover_version == 'optimized':
+        grover = GroverAlgorithmOptimized(oracle)
+    elif grover_version == 'exact':
+        grover = GroverAlgorithmExact(oracle)
+    elif grover_version == 'fixed_point':
+        grover = GroverAlgorithmFixedPoint(oracle)
+    else:
+        grover = GroverAlgorithmManual(oracle)
 
     if simulator is None:
         simulator = Aer.get_backend('qasm_simulator')
 
-    raw_results = grover.run_simulation(simulator, iterations=optimal_iters, shots=shots)
+    raw_results = grover.run_simulation(simulator, shots, num_solutions)
 
     parsed_results = {}
     for binary_state, count in raw_results.items():
