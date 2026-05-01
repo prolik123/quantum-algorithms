@@ -86,7 +86,7 @@ class TestQuantumIntegration(unittest.TestCase):
         roots = solve_quadratic_congruence(
             a=1, m=5,
             shots=self.test_shots,
-            use_optimized=True,
+            grover_version='optimized',
             simulator=self.simulator
         )
         self.assertListEqual(roots, [1, 4, 6])
@@ -96,7 +96,27 @@ class TestQuantumIntegration(unittest.TestCase):
         roots = solve_quadratic_congruence(
             a=1, m=5,
             shots=self.test_shots,
-            use_optimized=False,
+            grover_version='manual',
+            simulator=self.simulator
+        )
+        self.assertListEqual(roots, [1, 4, 6])
+
+    def test_end_to_end_exact_grover(self):
+        # Test x^2 ≡ 1 (mod 5) using the exact Grover version
+        roots = solve_quadratic_congruence(
+            a=1, m=5,
+            shots=self.test_shots,
+            grover_version='exact',
+            simulator=self.simulator
+        )
+        self.assertListEqual(roots, [1, 4, 6])
+
+    def test_end_to_end_fixed_point_grover(self):
+        # Test x^2 ≡ 1 (mod 5) using the fixed-point Grover version
+        roots = solve_quadratic_congruence(
+            a=1, m=5,
+            shots=self.test_shots,
+            grover_version='fixed_point',
             simulator=self.simulator
         )
         self.assertListEqual(roots, [1, 4, 6])
@@ -110,7 +130,7 @@ class TestQuantumIntegration(unittest.TestCase):
             a=1, m=5,
             num_qubits=4,
             shots=2048,  # Increase shots because search space is larger
-            use_optimized=True,
+            grover_version='optimized',
             simulator=self.simulator
         )
         self.assertListEqual(roots, expected_roots)
@@ -124,7 +144,7 @@ class TestQuantumIntegration(unittest.TestCase):
 
 class TestExhaustiveQuadraticCongruence(unittest.TestCase):
     """
-    Exhaustive test suite for values up to 50.
+    Exhaustive test suite for values up to 30.
     """
 
     def setUp(self):
@@ -143,25 +163,34 @@ class TestExhaustiveQuadraticCongruence(unittest.TestCase):
         HEAVY TEST: Actually runs the quantum simulator for all 'm' up to 30 and a's.
         """
 
-        # Test all modulo values from 3 up to 50
+        # Test all modulo values from 3 up to 30
         for m in range(3, 31):
             for a_val in range(1, m):
                 with self.subTest(a=a_val, m=m):
                     num_qubits = (m - 1).bit_length()
                     expected_roots = self._get_classical_roots(a_val, m, num_qubits)
 
-                    try:
-                        quantum_roots = solve_quadratic_congruence(
-                            a=a_val,
-                            m=m,
-                            use_optimized=True,
-                            simulator=self.simulator
-                        )
+                    if not expected_roots:
+                        # If there are no roots, the quantum function should return an empty list
+                        # without running the simulator.
+                        quantum_roots = solve_quadratic_congruence(a=a_val, m=m)
+                        self.assertListEqual(quantum_roots, [])
+                        continue
 
-                        self.assertListEqual(quantum_roots, expected_roots)
+                    for version in ['optimized', 'manual', 'exact', 'fixed_point']:
+                        with self.subTest(version=version):
+                            try:
+                                quantum_roots = solve_quadratic_congruence(
+                                    a=a_val,
+                                    m=m,
+                                    grover_version=version,
+                                    simulator=self.simulator
+                                )
 
-                    except ValueError as e:
-                        self.fail(f"Quantum simulation failed for a={a_val}, m={m}: {e}")
+                                self.assertListEqual(quantum_roots, expected_roots)
+
+                            except ValueError as e:
+                                self.fail(f"Quantum simulation failed for a={a_val}, m={m}, version={version}: {e}")
 
 
 if __name__ == '__main__':

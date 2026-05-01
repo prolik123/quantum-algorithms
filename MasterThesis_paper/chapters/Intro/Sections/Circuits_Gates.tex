@@ -52,9 +52,11 @@ It is a basic gate for generating quantum superposition from the input state and
 It creates a equal probability distribution between $\ket{0}$ and $\ket{1}$ state and can be denoted as:
 %
 %
+\bigskip
 \begin{equation}
     H = \frac{1}{\sqrt{2}}\begin{pmatrix} 1 & 1 \\ 1 & -1 \end{pmatrix}
 \end{equation}
+\bigskip
 %
 %
 Applying $H$ to $\ket{0}$ yields the positive superposition state $\ket{+} = \frac{1}{\sqrt{2}}(\ket{0} + \ket{1})$ and 
@@ -67,9 +69,11 @@ changing the relative phases without changing the measurement probabilities.
 %
 %
 This gate can be denoted as:
+\bigskip
 \begin{equation}
     S = \begin{pmatrix} 1 & 0 \\ 0 & i \end{pmatrix}, \quad T = \begin{pmatrix} 1 & 0 \\ 0 & e^{i\pi/4} \end{pmatrix}
 \end{equation}
+\bigskip
 %
 %
 \subsection{Two Qubit Gates: CNOT, SWAP, and Controlled-Phase}
@@ -91,6 +95,7 @@ In the standard computational basis $\{\ket{00}, \ket{01}, \ket{10}, \ket{11}\}$
 where the first qubit acts as the control, the matrix representation of CNOT looks like:
 %
 %
+\bigskip
 \begin{equation}
     \text{CNOT} = \begin{pmatrix} 
     1 & 0 & 0 & 0 \\ 
@@ -99,6 +104,7 @@ where the first qubit acts as the control, the matrix representation of CNOT loo
     0 & 0 & 1 & 0 
     \end{pmatrix}
 \end{equation}
+\bigskip
 
 The CNOT gate is really useful and will serves as the basic mechanism for entangling previously independent qubits.
 For example, if we start with the state $\ket{00}$, 
@@ -116,6 +122,7 @@ This gate is usefull for routing information across physical hardware topologies
 as not all qubits are directly connected to each other. 
 Typically only the nearest ones are only connected so we have to change theirs positions.
 It also will act as the final bit reversal step of the Quantum Fourier Transform (QFT) used in Shor's algorithm:
+\bigskip
 \begin{equation}
     \text{SWAP} = \begin{pmatrix} 
     1 & 0 & 0 & 0 \\ 
@@ -124,6 +131,7 @@ It also will act as the final bit reversal step of the Quantum Fourier Transform
     0 & 0 & 0 & 1 
     \end{pmatrix}
 \end{equation}
+\bigskip
 
 While the CNOT conditionally a flip a bit or leaves it unchanged, 
 the Controlled-Phase gate, denoted as $CP(\theta)$ or $CR_z(\theta)$ applies a conditional phase shift.
@@ -133,6 +141,7 @@ This gate adds a complex phase of $e^{i\theta}$ to the system if, and only if,
 both the control and target qubits are simultaneously in the $\ket{1}$ state:
 %
 %
+\bigskip
 \begin{equation}
     CP(\theta) = \begin{pmatrix} 
     1 & 0 & 0 & 0 \\ 
@@ -141,6 +150,7 @@ both the control and target qubits are simultaneously in the $\ket{1}$ state:
     0 & 0 & 0 & e^{i\theta} 
     \end{pmatrix}
 \end{equation}
+\bigskip
 
 This gate enables the precise extraction of periodic phases, which will necessary for tasks like integer factorization (Shor's algorithm).
 %
@@ -163,6 +173,7 @@ it is the key gate for building quantum oracles that will evaluate classical boo
 The CCNOT gate can be denoted as:
 %
 %
+\bigskip
 \begin{equation}
     \text{CCNOT} = \begin{pmatrix} 
     1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
@@ -175,6 +186,7 @@ The CCNOT gate can be denoted as:
     0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 
     \end{pmatrix}
 \end{equation}
+\bigskip
 
 %
 %
